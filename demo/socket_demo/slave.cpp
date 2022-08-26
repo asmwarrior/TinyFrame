@@ -7,7 +7,7 @@
 #include "../demo.hpp"
 
 using namespace TinyFrame_n;
-using TinyFrame_Demo=TinyFrame<>;
+using TinyFrame_Demo=TinyFrameDefault;
 
 Result helloListener(Msg *msg)
 {
@@ -36,7 +36,7 @@ Result replyListener(Msg *msg)
 
 int main(void)
 {
-    demo_tf = new TinyFrame_Demo({.WriteImpl=&WriteImpl, .Error=&ErrorCallback}, Peer::SLAVE); // 1 = master, 0 = slave
+    demo_tf = new TinyFrame_Demo({&WriteImpl, &ErrorCallback}, Peer::SLAVE); // 1 = master, 0 = slave
     demo_tf->AddTypeListener(1, helloListener);
     demo_tf->AddTypeListener(2, replyListener);
 

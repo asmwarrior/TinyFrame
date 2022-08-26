@@ -8,7 +8,10 @@ CKSUM<CKSUM_t::NONE> CksumStart<CKSUM_t::NONE>(void)
 
 template<>
 CKSUM<CKSUM_t::NONE> CksumAdd<CKSUM_t::NONE>(CKSUM<CKSUM_t::NONE> cksum, uint8_t byte)
-  { return cksum; }
+{ 
+  (void) byte;
+  return cksum; 
+}
 
 template<>
 CKSUM<CKSUM_t::NONE> CksumEnd<CKSUM_t::NONE>(CKSUM<CKSUM_t::NONE> cksum)

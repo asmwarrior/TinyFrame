@@ -34,11 +34,11 @@ void WriteImpl_2(const uint8_t *buff, uint32_t len)
 }
 
 void Error_1(std::string message){
-    
+    printf("Error_1: %s\n", message.c_str());
 }
 
 void Error_2(std::string message){
-
+    printf("Error_2: %s\n", message.c_str());
 }
 
 // --------- Mutex callbacks ----------
@@ -125,29 +125,29 @@ Result queryTimeoutListener(){
 
 
 const TinyFrame_CRC16::RequiredCallbacks callbacks_1 = {
-    .WriteImpl = TinyFrame_n::WriteImpl_1,
-    .Error = TinyFrame_n::Error_1,
+    TinyFrame_n::WriteImpl_1, // WriteImpl
+    TinyFrame_n::Error_1, // WriteImpl
 };
 
 const TinyFrame_CRC16::RequiredCallbacks callbacks_2 = {
-    .WriteImpl = TinyFrame_n::WriteImpl_2,
-    .Error = TinyFrame_n::Error_2,
+    TinyFrame_n::WriteImpl_2,
+    TinyFrame_n::Error_2,
 };
 
 const TinyFrame_CRC16::OptionalCallbacks callbacks_Mutex_1 = {
-    .ClaimTx =   TinyFrame_n::ClaimTx, 
-    .ReleaseTx = TinyFrame_n::ReleaseTx,
+    TinyFrame_n::ClaimTx, // ClaimTx
+    TinyFrame_n::ReleaseTx, // ReleaseTx
 };
 
 
 
 TinyFrame_n::TinyFrameConfig_t config = {
-    .ID_BYTES             = 1U,
-    .LEN_BYTES            = 2U,
-    .TYPE_BYTES           = 1U,
-    .USE_SOF_BYTE         = 1U,
-    .SOF_BYTE             = 0xAAU,
-    .PARSER_TIMEOUT_TICKS = 10U
+    1U, // ID_BYTES
+    2U, // LEN_BYTES
+    1U, // TYPE_BYTES
+    1U, // USE_SOF_BYTE
+    0xAAU, // SOF_BYTE
+    10U // PARSER_TIMEOUT_TICKS
 };
 
 TinyFrame_CRC16 tf_1(callbacks_1, TinyFrame_n::Peer::MASTER);
@@ -162,11 +162,13 @@ int main(){
     uint8_t messageData[] = "Hello TinyFrame!";
 
     TinyFrame_n::Msg msg = {
-        .frame_id    = 234,
-        .is_response = false,
-        .type        = 123,
-        .data        = messageData,
-        .len         = sizeof(messageData)
+        234, // frame_id   
+        false, // is_response
+        123, // type       
+        messageData, // data       
+        sizeof(messageData), // len        
+        nullptr, // userdata
+        nullptr // userdata2
     };
 
     bool successGenericListener = tf_2.AddGenericListener(&TinyFrame_n::genericListener);

@@ -4,7 +4,7 @@
 #include "../utils.hpp"
 
 using namespace TinyFrame_n;
-using TinyFrame_Demo=TinyFrame<>;
+using TinyFrame_Demo=TinyFrameDefault;
 
 extern TinyFrame_Demo demo_tf;
 
@@ -32,7 +32,7 @@ void WriteImpl(const uint8_t *buff, uint32_t len)
 }
 
 void Error(std::string message){
-    printf("%s", message);
+    printf("%s", message.c_str());
 }
 
 
@@ -50,10 +50,7 @@ Result testIdListener(Msg *msg)
     return Result::CLOSE;
 }
 
-TinyFrame_Demo demo_tf(TinyFrame_Demo::RequiredCallbacks{
-    .WriteImpl = WriteImpl,
-    .Error = Error
-}, Peer::MASTER);
+TinyFrame_Demo demo_tf({&WriteImpl, &Error}, Peer::MASTER);
 
 int main(void)
 {

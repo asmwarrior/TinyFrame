@@ -14,6 +14,7 @@
 
 //---------------------------------------------------------------------------
 #include <string>
+#include <new>
 //---------------------------------------------------------------------------
 
 #include "TinyFrame_Types.hpp"
@@ -84,7 +85,7 @@ class TinyFrame{
 
         // ------------------------ TO BE IMPLEMENTED BY USER ------------------------
 
-        const struct RequiredCallbacks{
+        struct RequiredCallbacks{
             /**
              * 'Write bytes' function that sends data to UART
              *
@@ -94,9 +95,9 @@ class TinyFrame{
 
             void (*Error)(std::string message);
 
-        }tfCallbacks_Required; // variable definition
+        }; // variable definition
 
-        const struct OptionalCallbacks{
+        struct OptionalCallbacks{
 
             /** Claim the TX interface before composing and sending a frame */
             bool (*ClaimTx)();
@@ -104,7 +105,7 @@ class TinyFrame{
             /** Free the TX interface after composing and sending a frame */
             void (*ReleaseTx)();
 
-        }tfCallbacks_Optional; // variable definition
+        }; // variable definition
 
         struct IdListener_ {
             ID id;
@@ -125,6 +126,8 @@ class TinyFrame{
             Listener fn;
         };
 
+        const RequiredCallbacks tfCallbacks_Required;
+        const OptionalCallbacks tfCallbacks_Optional;
         const TinyFrameConfig_t tfConfig;
 
         struct{
@@ -185,7 +188,7 @@ class TinyFrame{
          */
         static inline void ClearMsg(Msg *msg)
         {
-            msg = {};
+            *msg = {};
         }
 
         // ---------------------------------- API CALLS --------------------------------------
@@ -1317,6 +1320,20 @@ void _FN TinyFrame<TEMPLATE_PARMS>::Tick()
     }
 }
 
+/*
+* Allocate object during runtime within buffer using placement new
+* @param buf buffer where the object will be placed
+* @param cb TinyFrame required callbacks to be registered
+* @param config TinyFrame configuration to be used for this object
+* @param peer configuration which peer this object will represent
+*/
+template<TEMPLATE_ARGS>
+static TinyFrame<TEMPLATE_PARMS> tinyFrameCreate_Static(char buf[sizeof(TinyFrame<TEMPLATE_PARMS>)], const struct TinyFrame<TEMPLATE_PARMS>::RequiredCallbacks& cb, const TinyFrameConfig_t& config, const Peer peer = Peer::SLAVE){
+    return new(buf) TinyFrame<TEMPLATE_PARMS>(cb, config, peer);
+}
+
 } // TinyFrame_n
+
+using TinyFrameDefault=TinyFrame_n::TinyFrame<>;
 
 #endif // TinyFrameH
