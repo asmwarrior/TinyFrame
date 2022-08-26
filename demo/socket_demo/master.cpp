@@ -24,7 +24,7 @@ Result testGenericListener(Msg *msg)
 
 int main(void)
 {
-    demo_tf = new TinyFrame_Demo({.WriteImpl=&WriteImpl, .Error=&ErrorCallback}, Peer::MASTER); // 1 = master, 0 = slave
+    demo_tf = new TinyFrame_Demo({&WriteImpl, &ErrorCallback}, Peer::MASTER); // 1 = master, 0 = slave
     demo_tf->AddGenericListener(testGenericListener);
 
     demo_init(Peer::MASTER);

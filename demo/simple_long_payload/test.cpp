@@ -25,7 +25,7 @@ void WriteImpl(const uint8_t *buff, uint32_t len)
 }
 
 void ErrorCallback(std::string message){
-    printf("%s", message);
+    printf("%s", message.c_str());
 }
 
 /** An example listener function */
@@ -46,7 +46,7 @@ int main(void)
     Msg msg;
 
     // Set up the TinyFrame library
-    demo_tf = new TinyFrame_Demo({.WriteImpl=&WriteImpl, .Error=&ErrorCallback}, Peer::MASTER); // 1 = master, 0 = slave
+    demo_tf = new TinyFrame_Demo({&WriteImpl, &ErrorCallback}, Peer::MASTER); // 1 = master, 0 = slave
     demo_tf->AddGenericListener(myListener);
 
     printf("------ Simulate sending a LOOONG message --------\n");

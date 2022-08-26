@@ -32,7 +32,7 @@ void WriteImpl(const uint8_t *buff, uint32_t len)
 }
 
 void ErrorCallback(std::string message){
-    printf("%s", message);
+    printf("%s", message.c_str());
 }
 
 /** An example listener function */
@@ -52,10 +52,10 @@ Result testIdListener(Msg *msg)
 int main(void)
 {
     Msg msg;
-    const char *longstr = "Lorem ipsum dolor sit amet.";
+    // const char *longstr = "Lorem ipsum dolor sit amet.";
 
     // Set up the TinyFrame library
-    demo_tf = new TinyFrame_Demo({.WriteImpl=&WriteImpl, .Error=&ErrorCallback}, Peer::MASTER); // 1 = master, 0 = slave
+    demo_tf = new TinyFrame_Demo({&WriteImpl, &ErrorCallback}, Peer::MASTER); // 1 = master, 0 = slave
     demo_tf->AddGenericListener(myListener);
 
     printf("------ Simulate sending a message --------\n");
@@ -87,7 +87,7 @@ uint8_t TinyFrame_n::CksumStart<CKSUM_t::CUSTOM8>(void)
 template<>
 uint8_t TinyFrame_n::CksumAdd<CKSUM_t::CUSTOM8>(uint8_t cksum, uint8_t byte)
 {
-    return cksum ^ byte + 1;
+    return cksum ^ (byte + 1U);
 }
 
 template<>

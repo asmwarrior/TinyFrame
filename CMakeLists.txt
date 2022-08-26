@@ -1,8 +1,14 @@
 cmake_minimum_required(VERSION 3.7)
-project(tf)
+project(TinyFramePlusPlus)
 
 # This is a dummy CMakeLists file for CLion, which still doesn't understand Makefiles.
 # Do not try to build the library using this file, it's here only for static analysis.
+
+if(MSVC)
+  add_compile_options(/W4 /WX)
+else()
+  add_compile_options(-Wall -Wextra -Wpedantic -Werror)
+endif()
 
 set(CMAKE_CXX_STANDARD 14)
 

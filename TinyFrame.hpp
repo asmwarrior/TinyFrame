@@ -188,7 +188,7 @@ class TinyFrame{
          */
         static inline void ClearMsg(Msg *msg)
         {
-            msg = {};
+            *msg = {};
         }
 
         // ---------------------------------- API CALLS --------------------------------------
