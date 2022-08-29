@@ -516,7 +516,7 @@ bool _FN TinyFrame<TEMPLATE_PARMS>::AddIdListener(Msg *msg, Listener cb, Listene
         }
     }
 
-    this->tfCallbacks_Required.Error(ErrorMsg_t::ADDLISTENER_ID);
+    this->tfCallbacks_Required.Error(ErrorMsg_t::LISTENER_ADD_ID);
     return false;
 }
 
@@ -539,7 +539,7 @@ bool _FN TinyFrame<TEMPLATE_PARMS>::AddTypeListener(TYPE frame_type, Listener cb
         }
     }
 
-    this->tfCallbacks_Required.Error(ErrorMsg_t::ADDLISTENER_TYPE);
+    this->tfCallbacks_Required.Error(ErrorMsg_t::LISTENER_ADD_TYPE);
     return false;
 }
 
@@ -561,7 +561,7 @@ bool _FN TinyFrame<TEMPLATE_PARMS>::AddGenericListener(Listener cb)
         }
     }
 
-    this->tfCallbacks_Required.Error(ErrorMsg_t::ADDLISTENER_GENERIC);
+    this->tfCallbacks_Required.Error(ErrorMsg_t::LISTENER_ADD_GENERIC);
     return false;
 }
 
@@ -580,7 +580,7 @@ bool _FN TinyFrame<TEMPLATE_PARMS>::RemoveIdListener(ID frame_id)
         }
     }
 
-    this->tfCallbacks_Required.Error(ErrorMsg_t::REMOVELISTENER_ID);
+    this->tfCallbacks_Required.Error(ErrorMsg_t::LISTENER_REMOVE_ID);
     return false;
 }
 
@@ -599,7 +599,7 @@ bool _FN TinyFrame<TEMPLATE_PARMS>::RemoveTypeListener(TYPE type)
         }
     }
 
-    this->tfCallbacks_Required.Error(ErrorMsg_t::REMOVELISTENER_TYPE);
+    this->tfCallbacks_Required.Error(ErrorMsg_t::LISTENER_REMOVE_TYPE);
     return false;
 }
 
@@ -618,7 +618,7 @@ bool _FN TinyFrame<TEMPLATE_PARMS>::RemoveGenericListener(Listener cb)
         }
     }
 
-    this->tfCallbacks_Required.Error(ErrorMsg_t::REMOVELISTENER_GENERIC);
+    this->tfCallbacks_Required.Error(ErrorMsg_t::LISTENER_REMOVE_GENERIC);
     return false;
 }
 
@@ -719,7 +719,7 @@ void _FN TinyFrame<TEMPLATE_PARMS>::HandleReceivedMessage()
         }
     }
 
-    this->tfCallbacks_Required.Error(ErrorMsg_t::UNKNOWN_MESSAGE_TYPE);
+    this->tfCallbacks_Required.Error(ErrorMsg_t::MESSAGE_UNKNOWN_TYPE);
 }
 
 template<TEMPLATE_ARGS>
@@ -747,7 +747,7 @@ bool _FN TinyFrame<TEMPLATE_PARMS>::RenewIdListener(ID id)
         }
     }
 
-    this->tfCallbacks_Required.Error(ErrorMsg_t::RENEW_LISTENER_ID);
+    this->tfCallbacks_Required.Error(ErrorMsg_t::LISTENER_RENEW_ID);
     return false;
 }
 
@@ -798,7 +798,7 @@ void _FN TinyFrame<TEMPLATE_PARMS>::AcceptChar(unsigned char c)
     if (this->internal.parser_timeout_ticks >= this->tfConfig.PARSER_TIMEOUT_TICKS) {
         if (this->internal.state != State_::TFState_SOF) {
             this->ResetParser();
-            this->tfCallbacks_Required.Error(ErrorMsg_t::PARSER_TIMEOUT);
+            this->tfCallbacks_Required.Error(ErrorMsg_t::TIMEOUT_PARSER);
         }
     }
     this->internal.parser_timeout_ticks = 0;
@@ -864,7 +864,7 @@ void _FN TinyFrame<TEMPLATE_PARMS>::AcceptChar(unsigned char c)
                 CKSUM_FINALIZE(this->internal.cksum);
 
                 if (this->internal.cksum != this->internal.ref_cksum) {
-                    this->tfCallbacks_Required.Error(ErrorMsg_t::RX_HEADER_CRC_MISMATCH);
+                    this->tfCallbacks_Required.Error(ErrorMsg_t::CRC_MISMATCH_HEADER);
                     this->ResetParser();
                     break;
                 }
@@ -884,7 +884,7 @@ void _FN TinyFrame<TEMPLATE_PARMS>::AcceptChar(unsigned char c)
 
                 //Start collecting the payload
                 if (this->internal.len > MAX_PAYLOAD_RX) {
-                    this->tfCallbacks_Required.Error(ErrorMsg_t::PAYLOAD_TOO_LONG);
+                    this->tfCallbacks_Required.Error(ErrorMsg_t::TOOLONG_PAYLOAD);
                     // ERROR - frame too long. Consume, but do not store.
                     this->internal.discard_data = true;
                 }
@@ -921,7 +921,7 @@ void _FN TinyFrame<TEMPLATE_PARMS>::AcceptChar(unsigned char c)
                     if (this->internal.cksum == this->internal.ref_cksum) {
                         this->HandleReceivedMessage();
                     } else {
-                        this->tfCallbacks_Required.Error(ErrorMsg_t::BODY_CRC_MISMATCH);
+                        this->tfCallbacks_Required.Error(ErrorMsg_t::CRC_MISMATCH_BODY);
                     }
                 }
 
@@ -1310,7 +1310,7 @@ void _FN TinyFrame<TEMPLATE_PARMS>::Tick()
         if (!lst->fn || lst->timeout == 0) continue;
         // count down...
         if (--lst->timeout == 0) {
-            this->tfCallbacks_Required.Error(ErrorMsg_t::EXPIREDLISTENER_ID);
+            this->tfCallbacks_Required.Error(ErrorMsg_t::LISTENER_EXPIRED_ID);
             if (lst->fn_timeout != nullptr) {
                 lst->fn_timeout(); // execute timeout function
             }

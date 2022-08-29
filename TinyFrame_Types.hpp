@@ -20,20 +20,20 @@ enum class CKSUM_t{
 
 enum class ErrorMsg_t : uint8_t{
     NONE = 0U,
-    MUTEX_LOCKED_TX,        // TF already locked for tx!
-    ADDLISTENER_ID,         // Failed to add ID listener
-    ADDLISTENER_TYPE,       // Failed to add type listener
-    ADDLISTENER_GENERIC,    // Failed to add generic listener
-    REMOVELISTENER_ID,      // ID listener to remove not found
-    REMOVELISTENER_TYPE,    // Type listener to remove not found
-    REMOVELISTENER_GENERIC, // Generic listener to remove not found
-    UNKNOWN_MESSAGE_TYPE,   // Unhandled message, type
-    RENEW_LISTENER_ID,      // Renew listener: not found
-    PARSER_TIMEOUT,         // Parser timeout
-    RX_HEADER_CRC_MISMATCH, // Rx head cksum mismatch
-    PAYLOAD_TOO_LONG,       // Rx payload too long
-    BODY_CRC_MISMATCH,      // Body cksum mismatch
-    EXPIREDLISTENER_ID,     // ID listener has expired
+    MUTEX_LOCKED_TX,         // TF already locked for tx!
+    LISTENER_ADD_ID,         // Failed to add ID listener
+    LISTENER_ADD_TYPE,       // Failed to add type listener
+    LISTENER_ADD_GENERIC,    // Failed to add generic listener
+    LISTENER_REMOVE_ID,      // ID listener to remove not found
+    LISTENER_REMOVE_TYPE,    // Type listener to remove not found
+    LISTENER_REMOVE_GENERIC, // Generic listener to remove not found
+    LISTENER_RENEW_ID,       // Renew listener: not found
+    LISTENER_EXPIRED_ID,     // ID listener has expired
+    MESSAGE_UNKNOWN_TYPE,    // Unhandled message, type
+    TIMEOUT_PARSER,          // Parser timeout
+    CRC_MISMATCH_HEADER,     // Rx head cksum mismatch
+    CRC_MISMATCH_BODY,       // Body cksum mismatch
+    TOOLONG_PAYLOAD,         // Rx payload too long
 };
 
 //region Resolve data types
