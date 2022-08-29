@@ -807,7 +807,8 @@ void _FN TinyFrame<TEMPLATE_PARMS>::AcceptChar(unsigned char c)
 // This is a little dirty, but makes the code easier to read. It's used like e.g. if(),
 // the body is run only after the entire number (of data type 'type') was received
 // and stored to 'dest'
-#define COLLECT_NUMBER(dest, type, typesize) dest = (type)(((dest) << 8) | c); \
+#define BITMASK(numbits) ((1 << numbits) - 1)
+#define COLLECT_NUMBER(dest, type, typesize) dest = (((type)(((dest) << 8) | c)) & BITMASK(typesize * 8)); \
                                    if (++this->internal.rxi == typesize)
 
     if(!this->tfConfig.USE_SOF_BYTE){
