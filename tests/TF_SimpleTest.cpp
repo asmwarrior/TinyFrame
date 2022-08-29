@@ -12,13 +12,25 @@ namespace TinyFrame_n{
 
 void WriteImpl_1(const uint8_t *buff, uint32_t len)
 {
-    tf_2.Accept(buff, len);
     printf("WriteImpl1:");
     // send to UART
     for (size_t i = 0; i < len; i++){
         printf("%02x", buff[i]);
     }
     printf("\n");
+    tf_2.Accept(buff, len);
+
+    uint8_t buff2[128];
+    memcpy(buff2, buff, len);
+    buff2[10] = 0; // invalidate payload
+
+    printf("WriteImpl1:");
+    // send to UART
+    for (size_t i = 0; i < len; i++){
+        printf("%02x", buff2[i]);
+    }
+    printf("\n");
+    tf_2.Accept(buff2, len);
 }
 
 void WriteImpl_2(const uint8_t *buff, uint32_t len)
