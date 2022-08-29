@@ -18,11 +18,29 @@ enum class CKSUM_t{
     CRC32    = 32, // CRC32 with the polynomial 0xedb88320
 };
 
+enum class ErrorMsg_t : uint8_t{
+    NONE = 0U,
+    MUTEX_LOCKED_TX,         // TF already locked for tx!
+    LISTENER_ADD_ID,         // Failed to add ID listener
+    LISTENER_ADD_TYPE,       // Failed to add type listener
+    LISTENER_ADD_GENERIC,    // Failed to add generic listener
+    LISTENER_REMOVE_ID,      // ID listener to remove not found
+    LISTENER_REMOVE_TYPE,    // Type listener to remove not found
+    LISTENER_REMOVE_GENERIC, // Generic listener to remove not found
+    LISTENER_RENEW_ID,       // Renew listener: not found
+    LISTENER_EXPIRED_ID,     // ID listener has expired
+    MESSAGE_UNKNOWN_TYPE,    // Unhandled message, type
+    TIMEOUT_PARSER,          // Parser timeout
+    CRC_MISMATCH_HEADER,     // Rx head cksum mismatch
+    CRC_MISMATCH_BODY,       // Body cksum mismatch
+    TOOLONG_PAYLOAD,         // Rx payload too long
+};
+
 //region Resolve data types
 
-typedef size_t LEN; // LEN_BYTES
+typedef size_t LEN;  // LEN_BYTES
 typedef size_t TYPE; // TYPE_BYTES
-typedef size_t ID; // ID_BYTES
+typedef size_t ID;   // ID_BYTES
 
 // TODO: runtime checks
 // #if ID_BYTES != 1 and ID_BYTES != 2 and ID_BYTES != 4

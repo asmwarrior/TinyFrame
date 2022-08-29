@@ -2,7 +2,6 @@
 #include "../TinyFrame_CRC.hpp"
 
 #include <iostream>
-#include <string>
 #include <cassert>
 
 using TinyFrame_CRC16 = TinyFrame_n::TinyFrame<TinyFrame_n::CKSUM_t::CRC16>;
@@ -13,13 +12,25 @@ namespace TinyFrame_n{
 
 void WriteImpl_1(const uint8_t *buff, uint32_t len)
 {
-    tf_2.Accept(buff, len);
     printf("WriteImpl1:");
     // send to UART
     for (size_t i = 0; i < len; i++){
         printf("%02x", buff[i]);
     }
     printf("\n");
+    tf_2.Accept(buff, len);
+
+    uint8_t buff2[128];
+    memcpy(buff2, buff, len);
+    buff2[10] = 0; // invalidate payload
+
+    printf("WriteImpl1:");
+    // send to UART
+    for (size_t i = 0; i < len; i++){
+        printf("%02x", buff2[i]);
+    }
+    printf("\n");
+    tf_2.Accept(buff2, len);
 }
 
 void WriteImpl_2(const uint8_t *buff, uint32_t len)
@@ -33,12 +44,12 @@ void WriteImpl_2(const uint8_t *buff, uint32_t len)
     printf("\n");
 }
 
-void Error_1(std::string message){
-    printf("Error_1: %s\n", message.c_str());
+void Error_1(TinyFrame_n::ErrorMsg_t message){
+    printf("Error_1: %u\n", static_cast<uint8_t>(message));
 }
 
-void Error_2(std::string message){
-    printf("Error_2: %s\n", message.c_str());
+void Error_2(TinyFrame_n::ErrorMsg_t message){
+    printf("Error_2: %u\n", static_cast<uint8_t>(message));
 }
 
 // --------- Mutex callbacks ----------

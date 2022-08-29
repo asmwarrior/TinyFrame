@@ -13,7 +13,6 @@
 
 
 //---------------------------------------------------------------------------
-#include <string>
 #include <new>
 //---------------------------------------------------------------------------
 
@@ -93,7 +92,7 @@ class TinyFrame{
              */
             void (*WriteImpl)(const uint8_t *buff, uint32_t len);
 
-            void (*Error)(std::string message);
+            void (*Error)(ErrorMsg_t message);
 
         }; // variable definition
 
@@ -427,7 +426,7 @@ class TinyFrame{
 template<TEMPLATE_ARGS>
 bool _FN TinyFrame<TEMPLATE_PARMS>::ClaimTx_Internal() {
     if (this->internal.soft_lock) {
-        this->tfCallbacks_Required.Error("TF already locked for tx!");
+        this->tfCallbacks_Required.Error(ErrorMsg_t::MUTEX_LOCKED_TX);
         return false;
     }
 
@@ -517,7 +516,7 @@ bool _FN TinyFrame<TEMPLATE_PARMS>::AddIdListener(Msg *msg, Listener cb, Listene
         }
     }
 
-    this->tfCallbacks_Required.Error("Failed to add ID listener");
+    this->tfCallbacks_Required.Error(ErrorMsg_t::LISTENER_ADD_ID);
     return false;
 }
 
@@ -540,7 +539,7 @@ bool _FN TinyFrame<TEMPLATE_PARMS>::AddTypeListener(TYPE frame_type, Listener cb
         }
     }
 
-    this->tfCallbacks_Required.Error("Failed to add type listener");
+    this->tfCallbacks_Required.Error(ErrorMsg_t::LISTENER_ADD_TYPE);
     return false;
 }
 
@@ -562,7 +561,7 @@ bool _FN TinyFrame<TEMPLATE_PARMS>::AddGenericListener(Listener cb)
         }
     }
 
-    this->tfCallbacks_Required.Error("Failed to add generic listener");
+    this->tfCallbacks_Required.Error(ErrorMsg_t::LISTENER_ADD_GENERIC);
     return false;
 }
 
@@ -581,7 +580,7 @@ bool _FN TinyFrame<TEMPLATE_PARMS>::RemoveIdListener(ID frame_id)
         }
     }
 
-    this->tfCallbacks_Required.Error("ID listener %d to remove not found", (int)frame_id);
+    this->tfCallbacks_Required.Error(ErrorMsg_t::LISTENER_REMOVE_ID);
     return false;
 }
 
@@ -600,7 +599,7 @@ bool _FN TinyFrame<TEMPLATE_PARMS>::RemoveTypeListener(TYPE type)
         }
     }
 
-    this->tfCallbacks_Required.Error("Type listener %d to remove not found", (int)type);
+    this->tfCallbacks_Required.Error(ErrorMsg_t::LISTENER_REMOVE_TYPE);
     return false;
 }
 
@@ -619,7 +618,7 @@ bool _FN TinyFrame<TEMPLATE_PARMS>::RemoveGenericListener(Listener cb)
         }
     }
 
-    this->tfCallbacks_Required.Error("Generic listener to remove not found");
+    this->tfCallbacks_Required.Error(ErrorMsg_t::LISTENER_REMOVE_GENERIC);
     return false;
 }
 
@@ -720,7 +719,7 @@ void _FN TinyFrame<TEMPLATE_PARMS>::HandleReceivedMessage()
         }
     }
 
-    this->tfCallbacks_Required.Error("Unhandled message, type");
+    this->tfCallbacks_Required.Error(ErrorMsg_t::MESSAGE_UNKNOWN_TYPE);
 }
 
 template<TEMPLATE_ARGS>
@@ -748,7 +747,7 @@ bool _FN TinyFrame<TEMPLATE_PARMS>::RenewIdListener(ID id)
         }
     }
 
-    this->tfCallbacks_Required.Error("Renew listener: not found (id %d)", (int)id);
+    this->tfCallbacks_Required.Error(ErrorMsg_t::LISTENER_RENEW_ID);
     return false;
 }
 
@@ -799,7 +798,7 @@ void _FN TinyFrame<TEMPLATE_PARMS>::AcceptChar(unsigned char c)
     if (this->internal.parser_timeout_ticks >= this->tfConfig.PARSER_TIMEOUT_TICKS) {
         if (this->internal.state != State_::TFState_SOF) {
             this->ResetParser();
-            this->tfCallbacks_Required.Error("Parser timeout");
+            this->tfCallbacks_Required.Error(ErrorMsg_t::TIMEOUT_PARSER);
         }
     }
     this->internal.parser_timeout_ticks = 0;
@@ -808,7 +807,8 @@ void _FN TinyFrame<TEMPLATE_PARMS>::AcceptChar(unsigned char c)
 // This is a little dirty, but makes the code easier to read. It's used like e.g. if(),
 // the body is run only after the entire number (of data type 'type') was received
 // and stored to 'dest'
-#define COLLECT_NUMBER(dest, type, typesize) dest = (type)(((dest) << 8) | c); \
+#define BITMASK(numbits) ((1 << numbits) - 1)
+#define COLLECT_NUMBER(dest, type, typesize) dest = (((type)(((dest) << 8) | c)) & BITMASK(typesize * 8)); \
                                    if (++this->internal.rxi == typesize)
 
     if(!this->tfConfig.USE_SOF_BYTE){
@@ -864,7 +864,7 @@ void _FN TinyFrame<TEMPLATE_PARMS>::AcceptChar(unsigned char c)
                 CKSUM_FINALIZE(this->internal.cksum);
 
                 if (this->internal.cksum != this->internal.ref_cksum) {
-                    this->tfCallbacks_Required.Error("Rx head cksum mismatch");
+                    this->tfCallbacks_Required.Error(ErrorMsg_t::CRC_MISMATCH_HEADER);
                     this->ResetParser();
                     break;
                 }
@@ -884,7 +884,7 @@ void _FN TinyFrame<TEMPLATE_PARMS>::AcceptChar(unsigned char c)
 
                 //Start collecting the payload
                 if (this->internal.len > MAX_PAYLOAD_RX) {
-                    this->tfCallbacks_Required.Error("Rx payload too long");
+                    this->tfCallbacks_Required.Error(ErrorMsg_t::TOOLONG_PAYLOAD);
                     // ERROR - frame too long. Consume, but do not store.
                     this->internal.discard_data = true;
                 }
@@ -921,7 +921,7 @@ void _FN TinyFrame<TEMPLATE_PARMS>::AcceptChar(unsigned char c)
                     if (this->internal.cksum == this->internal.ref_cksum) {
                         this->HandleReceivedMessage();
                     } else {
-                        this->tfCallbacks_Required.Error("Body cksum mismatch");
+                        this->tfCallbacks_Required.Error(ErrorMsg_t::CRC_MISMATCH_BODY);
                     }
                 }
 
@@ -1310,7 +1310,7 @@ void _FN TinyFrame<TEMPLATE_PARMS>::Tick()
         if (!lst->fn || lst->timeout == 0) continue;
         // count down...
         if (--lst->timeout == 0) {
-            this->tfCallbacks_Required.Error("ID listener has expired");
+            this->tfCallbacks_Required.Error(ErrorMsg_t::LISTENER_EXPIRED_ID);
             if (lst->fn_timeout != nullptr) {
                 lst->fn_timeout(); // execute timeout function
             }

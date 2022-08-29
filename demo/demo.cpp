@@ -18,7 +18,6 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <cstring>
 #include <arpa/inet.h>
 #include <signal.h>
 #include <malloc.h>
@@ -61,8 +60,8 @@ void WriteImpl(const uint8_t *buff, uint32_t len)
     }
 }
 
-void ErrorCallback(std::string message){
-    printf("%s", message.c_str());
+void ErrorCallback(TinyFrame_n::ErrorMsg_t message){
+    printf("Error: %u", static_cast<uint8_t>(message));
 }
 
 /**
