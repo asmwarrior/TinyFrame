@@ -31,8 +31,8 @@ void WriteImpl(const uint8_t *buff, uint32_t len)
     demo_tf.Accept(xbuff, len);
 }
 
-void Error(std::string message){
-    printf("%s", message.c_str());
+void Error(TinyFrame_n::ErrorMsg_t message){
+    printf("Error: %u", static_cast<uint8_t>(message));
 }
 
 

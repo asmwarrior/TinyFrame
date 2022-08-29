@@ -18,7 +18,7 @@ extern TinyFrame_Demo *demo_tf;
 
 extern void WriteImpl(const uint8_t *buff, uint32_t len);
 
-extern void ErrorCallback(std::string message);
+extern void ErrorCallback(TinyFrame_n::ErrorMsg_t message);
 
 /** Sleep and wait for ^C */
 void demo_sleep(void);

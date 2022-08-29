@@ -2,7 +2,6 @@
 #include "../TinyFrame_CRC.hpp"
 
 #include <iostream>
-#include <string>
 #include <cassert>
 
 using TinyFrame_CRC16 = TinyFrame_n::TinyFrame<TinyFrame_n::CKSUM_t::CRC16>;
@@ -33,12 +32,12 @@ void WriteImpl_2(const uint8_t *buff, uint32_t len)
     printf("\n");
 }
 
-void Error_1(std::string message){
-    printf("Error_1: %s\n", message.c_str());
+void Error_1(TinyFrame_n::ErrorMsg_t message){
+    printf("Error_1: %u\n", static_cast<uint8_t>(message));
 }
 
-void Error_2(std::string message){
-    printf("Error_2: %s\n", message.c_str());
+void Error_2(TinyFrame_n::ErrorMsg_t message){
+    printf("Error_2: %u\n", static_cast<uint8_t>(message));
 }
 
 // --------- Mutex callbacks ----------

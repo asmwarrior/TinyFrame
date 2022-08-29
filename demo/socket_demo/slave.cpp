@@ -3,7 +3,6 @@
 //
 
 #include <cstdio>
-#include <cstring>
 #include "../demo.hpp"
 
 using namespace TinyFrame_n;

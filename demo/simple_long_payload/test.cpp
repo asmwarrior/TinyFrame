@@ -24,8 +24,8 @@ void WriteImpl(const uint8_t *buff, uint32_t len)
     demo_tf->Accept(buff, len);
 }
 
-void ErrorCallback(std::string message){
-    printf("%s", message.c_str());
+void ErrorCallback(TinyFrame_n::ErrorMsg_t message){
+    printf("Error: %u", static_cast<uint8_t>(message));
 }
 
 /** An example listener function */
