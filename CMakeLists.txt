@@ -29,7 +29,9 @@ set(SOURCES_DEMO
         demo/demo.hpp
         )
 
+        
 add_executable(Tests ${SOURCES_TINYFRAME} tests/TF_SimpleTest.cpp)
+target_link_options(Tests PRIVATE "LINKER:-Map=Tests.map")
 
 add_executable(demo.simple ${SOURCES_TINYFRAME} ${SOURCES_UTILS} demo/simple/test.cpp)
 add_executable(demo.simple_custom_cksum ${SOURCES_TINYFRAME} ${SOURCES_UTILS} demo/simple_custom_cksum/test.cpp)
