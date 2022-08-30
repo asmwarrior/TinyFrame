@@ -97,7 +97,7 @@ class TinyFrame{
              *
              * ! Implement this in your application code !
              */
-            void (*WriteImpl)(const uint8_t *buff, uint32_t len);
+            void (*WriteImpl)(const uint8_t *buff, size_t len);
 
             void (*Error)(ErrorMsg_t message);
 
@@ -163,8 +163,8 @@ class TinyFrame{
             // Buffer for building frames
             uint8_t sendbuf[SENDBUF_LEN]; //!< Transmit temporary buffer
 
-            uint32_t tx_pos;        //!< Next write position in the Tx buffer (used for multipart)
-            uint32_t tx_len;        //!< Total expected Tx length
+            size_t tx_pos;        //!< Next write position in the Tx buffer (used for multipart)
+            size_t tx_len;        //!< Total expected Tx length
             CKSUM<CKSUM_TYPE> tx_cksum;      //!< Transmit checksum accumulator
 
             bool tfCallbacks_Optional_registered;
@@ -205,7 +205,7 @@ class TinyFrame{
          * @param buffer - byte buffer to process
          * @param count - nr of bytes in the buffer
          */
-        void Accept(const uint8_t *buffer, uint32_t count);
+        void Accept(const uint8_t *buffer, size_t count);
 
         /**
          * Accept a single incoming byte
@@ -378,7 +378,7 @@ class TinyFrame{
          * @param buff - buffer to send bytes from
          * @param length - number of bytes to send
          */
-        void Multipart_Payload(const uint8_t *buff, uint32_t length);
+        void Multipart_Payload(const uint8_t *buff, size_t length);
 
         /**
          * Close the multipart message, generating chekcsum and releasing the Tx lock.
@@ -390,13 +390,13 @@ class TinyFrame{
     private: 
 
         void _FN HandleReceivedMessage();
-        uint32_t _FN ComposeHead(uint8_t *outbuff, Msg *msg);
-        uint32_t _FN ComposeBody(uint8_t *outbuff,
+        size_t _FN ComposeHead(uint8_t *outbuff, Msg *msg);
+        size_t _FN ComposeBody(uint8_t *outbuff,
                                             const uint8_t *data, LEN data_len,
                                             CKSUM<CKSUM_TYPE> *cksum);
-        uint32_t _FN ComposeTail(uint8_t *outbuff, CKSUM<CKSUM_TYPE> *cksum);
+        size_t _FN ComposeTail(uint8_t *outbuff, CKSUM<CKSUM_TYPE> *cksum);
         bool _FN SendFrame_Begin(Msg *msg, Listener listener, Listener_Timeout ftimeout, TICKS timeout);
-        void _FN SendFrame_Chunk(const uint8_t *buff, uint32_t length);
+        void _FN SendFrame_Chunk(const uint8_t *buff, size_t length);
         void _FN SendFrame_End();
         bool _FN SendFrame(Msg *msg, Listener listener, Listener_Timeout ftimeout, TICKS timeout);
 
@@ -765,9 +765,9 @@ bool _FN TinyFrame<TEMPLATE_PARMS>::RenewIdListener(ID id)
 
 /** Handle a received byte buffer */
 template<TEMPLATE_ARGS>
-void _FN TinyFrame<TEMPLATE_PARMS>::Accept(const uint8_t *buffer, uint32_t count)
+void _FN TinyFrame<TEMPLATE_PARMS>::Accept(const uint8_t *buffer, size_t count)
 {
-    uint32_t i;
+    size_t i;
     for (i = 0; i < count; i++) {
         this->AcceptChar(buffer[i]);
     }
@@ -992,13 +992,13 @@ void _FN TinyFrame<TEMPLATE_PARMS>::AcceptChar(unsigned char c)
  * @return nr of bytes in outbuff used by the frame, 0 on failure
  */
 template<TEMPLATE_ARGS>
-uint32_t _FN TinyFrame<TEMPLATE_PARMS>::ComposeHead(uint8_t *outbuff, Msg *msg)
+size_t _FN TinyFrame<TEMPLATE_PARMS>::ComposeHead(uint8_t *outbuff, Msg *msg)
 {
     int8_t si = 0; // signed small int
     uint8_t b = 0;
     ID id = 0;
     CKSUM<CKSUM_TYPE> cksum = 0;
-    uint32_t pos = 0;
+    size_t pos = 0;
 
     (void)cksum; // suppress "unused" warning if checksums are disabled
 
@@ -1046,13 +1046,13 @@ uint32_t _FN TinyFrame<TEMPLATE_PARMS>::ComposeHead(uint8_t *outbuff, Msg *msg)
  * @return nr of bytes in outbuff used
  */
 template<TEMPLATE_ARGS>
-uint32_t _FN TinyFrame<TEMPLATE_PARMS>::ComposeBody(uint8_t *outbuff,
+size_t _FN TinyFrame<TEMPLATE_PARMS>::ComposeBody(uint8_t *outbuff,
                                     const uint8_t *data, LEN data_len,
                                     CKSUM<CKSUM_TYPE> *cksum)
 {
     LEN i = 0;
     uint8_t b = 0;
-    uint32_t pos = 0;
+    size_t pos = 0;
 
     for (i = 0; i < data_len; i++) {
         b = data[i];
@@ -1071,11 +1071,11 @@ uint32_t _FN TinyFrame<TEMPLATE_PARMS>::ComposeBody(uint8_t *outbuff,
  * @return nr of bytes in outbuff used
  */
 template<TEMPLATE_ARGS>
-uint32_t _FN TinyFrame<TEMPLATE_PARMS>::ComposeTail(uint8_t *outbuff, CKSUM<CKSUM_TYPE> *cksum)
+size_t _FN TinyFrame<TEMPLATE_PARMS>::ComposeTail(uint8_t *outbuff, CKSUM<CKSUM_TYPE> *cksum)
 {
     int8_t si = 0; // signed small int
     uint8_t b = 0;
-    uint32_t pos = 0;
+    size_t pos = 0;
 
     if(CKSUM_TYPE != CKSUM_t::NONE){
         CKSUM_FINALIZE(*cksum);
@@ -1102,7 +1102,7 @@ bool _FN TinyFrame<TEMPLATE_PARMS>::SendFrame_Begin(Msg *msg, Listener listener,
         TRY(this->ClaimTx_Internal());
     }
 
-    this->internal.tx_pos = (uint32_t) this->ComposeHead(this->internal.sendbuf, msg); // frame ID is incremented here if it's not a response
+    this->internal.tx_pos = (size_t) this->ComposeHead(this->internal.sendbuf, msg); // frame ID is incremented here if it's not a response
     this->internal.tx_len = msg->len;
 
     if (listener) {
@@ -1128,11 +1128,11 @@ bool _FN TinyFrame<TEMPLATE_PARMS>::SendFrame_Begin(Msg *msg, Listener listener,
  * @param length - count
  */
 template<TEMPLATE_ARGS>
-void _FN TinyFrame<TEMPLATE_PARMS>::SendFrame_Chunk(const uint8_t *buff, uint32_t length)
+void _FN TinyFrame<TEMPLATE_PARMS>::SendFrame_Chunk(const uint8_t *buff, size_t length)
 {
-    uint32_t remain;
-    uint32_t chunk;
-    uint32_t sent = 0;
+    size_t remain;
+    size_t chunk;
+    size_t sent = 0;
 
     remain = length;
     while (remain > 0) {
@@ -1285,7 +1285,7 @@ void _FN TinyFrame<TEMPLATE_PARMS>::Respond_Multipart(Msg *msg)
 }
 
 template<TEMPLATE_ARGS>
-void _FN TinyFrame<TEMPLATE_PARMS>::Multipart_Payload(const uint8_t *buff, uint32_t length)
+void _FN TinyFrame<TEMPLATE_PARMS>::Multipart_Payload(const uint8_t *buff, size_t length)
 {
     this->SendFrame_Chunk(buff, length);
 }

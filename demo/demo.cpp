@@ -46,7 +46,7 @@ void demo_disconn(void)
  * @param buff
  * @param len
  */
-void WriteImpl(const uint8_t *buff, uint32_t len)
+void WriteImpl(const uint8_t *buff, size_t len)
 {
     printf("\033[32mWriteImpl - sending frame:\033[0m\n");
     dumpFrame(buff, len);

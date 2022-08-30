@@ -14,7 +14,7 @@ extern const char *romeo;
  * This function should be defined in the application code.
  * It implements the lowest layer - sending bytes to UART (or other)
  */
-void WriteImpl(const uint8_t *buff, uint32_t len)
+void WriteImpl(const uint8_t *buff, size_t len)
 {
     printf("--------------------\n");
     printf("\033[32mWriteImpl - sending frame:\033[0m\n");
@@ -62,11 +62,11 @@ int main(void)
     // Now we send the payload in as many pieces as we like.
     // Careful - TF transmitter is locked until we close the multipart frame
     
-    uint32_t remain = strlen(romeo);
+    size_t remain = strlen(romeo);
     const uint8_t* toSend = (const uint8_t*)romeo;
     
     while (remain > 0) {
-      uint32_t chunk = (remain>16) ? 16 : remain;
+      size_t chunk = (remain>16) ? 16 : remain;
       
       // Send a piece
       demo_tf->Multipart_Payload(toSend, chunk);

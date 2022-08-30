@@ -13,7 +13,7 @@ bool do_corrupt = false;
  * This function should be defined in the application code.
  * It implements the lowest layer - sending bytes to UART (or other)
  */
-void WriteImpl(const uint8_t *buff, uint32_t len)
+void WriteImpl(const uint8_t *buff, size_t len)
 {
     printf("--------------------\n");
     printf("\033[32mWriteImpl - sending frame:\033[0m\n");
