@@ -5,9 +5,10 @@
 #include <cassert>
 
 using TinyFrame_CRC16 = TinyFrame_n::TinyFrame<TinyFrame_n::CKSUM_t::CRC16>;
+using TinyFrame_CRC16T = TinyFrame_n::TinyFrame<TinyFrame_n::CKSUM_t::CRC16_TABLELESS>;
 
 extern TinyFrame_CRC16 tf_1;
-extern TinyFrame_CRC16 tf_2;
+extern TinyFrame_CRC16T tf_2;
 namespace TinyFrame_n{
 
 void WriteImpl_1(const uint8_t *buff, size_t len)
@@ -140,7 +141,7 @@ const TinyFrame_CRC16::RequiredCallbacks callbacks_1 = {
     TinyFrame_n::Error_1, // WriteImpl
 };
 
-const TinyFrame_CRC16::RequiredCallbacks callbacks_2 = {
+const TinyFrame_CRC16T::RequiredCallbacks callbacks_2 = {
     TinyFrame_n::WriteImpl_2,
     TinyFrame_n::Error_2,
 };
@@ -162,7 +163,7 @@ TinyFrame_n::TinyFrameConfig_t config = {
 };
 
 TinyFrame_CRC16 tf_1(callbacks_1, TinyFrame_n::Peer::MASTER);
-TinyFrame_CRC16 tf_2(callbacks_2, TinyFrame_n::Peer::SLAVE);
+TinyFrame_CRC16T tf_2(callbacks_2, TinyFrame_n::Peer::SLAVE);
 
 // TinyFrame_CRC16 tf16(callbacks16);
 // TinyFrame_CRC32 tf32_2(callbacks32, config);
