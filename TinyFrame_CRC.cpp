@@ -2,6 +2,31 @@
 
 namespace TinyFrame_n{
 
+/* Tableless CRC */
+
+template<typename DATA_TYPE>
+DATA_TYPE TablelessCrc_Function(DATA_TYPE poly, DATA_TYPE inital_value, uint8_t byte, uint8_t byte_index) {
+
+  /* setup local variables */
+  constexpr DATA_TYPE msbMask = static_cast<DATA_TYPE>(1 << ((sizeof(DATA_TYPE) * 8U) - 1));
+  DATA_TYPE crc = inital_value ^ byte;
+
+  /* actual CRC calulation using XOR */
+  for (uint8_t bitIndex = byte_index * 8U; bitIndex < ((byte_index + 1U) * 8U); bitIndex++) {
+    if (crc & msbMask) {
+      crc = static_cast<DATA_TYPE>((crc << 1U) ^ poly);
+    } else {
+      crc = static_cast<DATA_TYPE>(crc << 1U);
+    }
+  }
+  return crc;
+}
+
+static size_t tablelessCrc_ByteIndex;
+
+
+/* CRC implementations */
+
 template<>
 CKSUM<CKSUM_t::NONE> CksumStart<CKSUM_t::NONE>(void)
   { return 0; }
@@ -166,5 +191,67 @@ CKSUM<CKSUM_t::CRC32> CksumAdd<CKSUM_t::CRC32>(CKSUM<CKSUM_t::CRC32> cksum, uint
 template<>
 CKSUM<CKSUM_t::CRC32> CksumEnd<CKSUM_t::CRC32>(CKSUM<CKSUM_t::CRC32> cksum)
   { return (CKSUM<CKSUM_t::CRC32>) ~cksum; }
+
+
+
+
+/* CRC8_TABLELESS */
+
+template <>
+CKSUM<CKSUM_t::CRC8_TABLELESS> CksumStart<CKSUM_t::CRC8_TABLELESS>(void)
+{
+  tablelessCrc_ByteIndex = 0U;
+  return (CKSUM<CKSUM_t::CRC8_TABLELESS>)0x00;
+}
+
+template <>
+CKSUM<CKSUM_t::CRC8_TABLELESS> CksumAdd<CKSUM_t::CRC8_TABLELESS>(CKSUM<CKSUM_t::CRC8_TABLELESS> cksum, uint8_t byte)
+{
+  return TablelessCrc_Function<uint8_t>(0x31U, cksum, byte, tablelessCrc_ByteIndex % sizeof(CKSUM<CKSUM_t::CRC8_TABLELESS>));
+}
+
+template <>
+CKSUM<CKSUM_t::CRC8_TABLELESS> CksumEnd<CKSUM_t::CRC8_TABLELESS>(CKSUM<CKSUM_t::CRC8_TABLELESS> cksum)
+{
+  return cksum;
+}
+
+/* CRC16_TABLELESS */
+
+template <>
+CKSUM<CKSUM_t::CRC16_TABLELESS> CksumStart<CKSUM_t::CRC16_TABLELESS>(void)
+{
+  tablelessCrc_ByteIndex = 0U;
+  return 0x0000;
+}
+template <>
+CKSUM<CKSUM_t::CRC16_TABLELESS> CksumAdd<CKSUM_t::CRC16_TABLELESS>(CKSUM<CKSUM_t::CRC16_TABLELESS> cksum, uint8_t byte)
+{
+  return TablelessCrc_Function<uint16_t>(0x8005U, cksum, byte, tablelessCrc_ByteIndex % sizeof(CKSUM<CKSUM_t::CRC16_TABLELESS>));
+}
+template <>
+CKSUM<CKSUM_t::CRC16_TABLELESS> CksumEnd<CKSUM_t::CRC16_TABLELESS>(CKSUM<CKSUM_t::CRC16_TABLELESS> cksum)
+{
+  return cksum;
+}
+
+/* CRC32_TABLELESS */
+
+template <>
+CKSUM<CKSUM_t::CRC32_TABLELESS> CksumStart<CKSUM_t::CRC32_TABLELESS>(void)
+{
+  tablelessCrc_ByteIndex = 0U;
+  return (CKSUM<CKSUM_t::CRC32_TABLELESS>)0xFFFFFFFF;
+}
+template <>
+CKSUM<CKSUM_t::CRC32_TABLELESS> CksumAdd<CKSUM_t::CRC32_TABLELESS>(CKSUM<CKSUM_t::CRC32_TABLELESS> cksum, uint8_t byte)
+{
+  return TablelessCrc_Function<uint32_t>(0xEDB88320U, cksum, byte, tablelessCrc_ByteIndex % sizeof(CKSUM<CKSUM_t::CRC32_TABLELESS>));
+}
+template <>
+CKSUM<CKSUM_t::CRC32_TABLELESS> CksumEnd<CKSUM_t::CRC32_TABLELESS>(CKSUM<CKSUM_t::CRC32_TABLELESS> cksum)
+{
+  return (CKSUM<CKSUM_t::CRC32_TABLELESS>)~cksum;
+}
 
 } // TinyFrame_n
