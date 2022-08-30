@@ -9,7 +9,7 @@ DATA_TYPE TablelessCrc_Function(DATA_TYPE poly, DATA_TYPE inital_value, uint8_t 
 
   /* setup local variables */
   constexpr DATA_TYPE msbMask = static_cast<DATA_TYPE>(1 << ((sizeof(DATA_TYPE) * 8U) - 1));
-  DATA_TYPE crc = inital_value ^ byte;
+  DATA_TYPE crc = inital_value ^ (byte << (byte_index * 8U));
 
   /* actual CRC calulation using XOR */
   for (uint8_t bitIndex = byte_index * 8U; bitIndex < ((byte_index + 1U) * 8U); bitIndex++) {
