@@ -30,8 +30,11 @@ namespace TinyFrame_n{
 //   CKSUM_CUSTOM8, CKSUM_CUSTOM16, CKSUM_CUSTOM32
 // Custom checksums require you to implement checksum functions (see TinyFrame.h)
 
-#define TEMPLATE_ARGS CKSUM_t CKSUM_TYPE, size_t MAX_PAYLOAD_RX, size_t SENDBUF_LEN, size_t MAX_LISTENER
-#define TEMPLATE_PARMS CKSUM_TYPE, MAX_PAYLOAD_RX, SENDBUF_LEN, MAX_LISTENER
+#define TEMPLATE_ARGS CKSUM_t CKSUM_TYPE, size_t MAX_PAYLOAD_RX, size_t SENDBUF_LEN,\
+    size_t MAX_LISTENERS_GENERIC, size_t MAX_LISTENERS_TYPE, size_t MAX_LISTENERS_ID
+
+#define TEMPLATE_PARMS CKSUM_TYPE, MAX_PAYLOAD_RX, SENDBUF_LEN,\
+    MAX_LISTENERS_GENERIC, MAX_LISTENERS_TYPE, MAX_LISTENERS_ID
 
 template<
 // Checksum Calculation Method
@@ -42,8 +45,12 @@ size_t MAX_PAYLOAD_RX=1024,
 // Size of the sending buffer. Larger payloads will be split to pieces and sent
 // in multiple calls to the write function. This can be lowered to reduce RAM usage.
 size_t SENDBUF_LEN=128,
-// Maximum number of listeners for each id, type or generic
-size_t MAX_LISTENER=10
+// Maximum number of listeners for generic
+size_t MAX_LISTENERS_GENERIC=1,
+// Maximum number of listeners for each type
+size_t MAX_LISTENERS_TYPE=5,
+// Maximum number of listeners for each id
+size_t MAX_LISTENERS_ID=5
 >
 class TinyFrame{
     public:
@@ -172,9 +179,9 @@ class TinyFrame{
             
 
             /* Transaction callbacks */
-            IdListener_ id_listeners[MAX_LISTENER];
-            TypeListener_ type_listeners[MAX_LISTENER];
-            GenericListener_ generic_listeners[MAX_LISTENER];
+            IdListener_ id_listeners[MAX_LISTENERS_ID];
+            TypeListener_ type_listeners[MAX_LISTENERS_TYPE];
+            GenericListener_ generic_listeners[MAX_LISTENERS_GENERIC];
 
         }internal;
 
@@ -499,7 +506,7 @@ bool _FN TinyFrame<TEMPLATE_PARMS>::AddIdListener(Msg *msg, Listener cb, Listene
 {
     COUNT i;
     IdListener_ *lst;
-    for (i = 0; i < MAX_LISTENER; i++) {
+    for (i = 0; i < MAX_LISTENERS_ID; i++) {
         lst = &this->internal.id_listeners[i];
         // test for empty slot
         if (lst->fn == nullptr) {
@@ -526,7 +533,7 @@ bool _FN TinyFrame<TEMPLATE_PARMS>::AddTypeListener(TYPE frame_type, Listener cb
 {
     COUNT i;
     TypeListener_ *lst;
-    for (i = 0; i < MAX_LISTENER; i++) {
+    for (i = 0; i < MAX_LISTENERS_TYPE; i++) {
         lst = &this->internal.type_listeners[i];
         // test for empty slot
         if (lst->fn == nullptr) {
@@ -549,7 +556,7 @@ bool _FN TinyFrame<TEMPLATE_PARMS>::AddGenericListener(Listener cb)
 {
     COUNT i;
     GenericListener_ *lst;
-    for (i = 0; i < MAX_LISTENER; i++) {
+    for (i = 0; i < MAX_LISTENERS_GENERIC; i++) {
         lst = &this->internal.generic_listeners[i];
         // test for empty slot
         if (lst->fn == nullptr) {
