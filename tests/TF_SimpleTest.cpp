@@ -170,6 +170,8 @@ TinyFrame_CRC16 tf_2(callbacks_2, TinyFrame_n::Peer::SLAVE);
 
 int main(){
 
+    printf("size tf_1: %llu\n\n", sizeof(tf_1));
+
     uint8_t messageData[] = "Hello TinyFrame!";
 
     TinyFrame_n::Msg msg = {
