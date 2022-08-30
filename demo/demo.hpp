@@ -16,7 +16,7 @@ using TinyFrame_Demo=TinyFrameDefault;
 
 extern TinyFrame_Demo *demo_tf;
 
-extern void WriteImpl(const uint8_t *buff, uint32_t len);
+extern void WriteImpl(const uint8_t *buff, size_t len);
 
 extern void ErrorCallback(TinyFrame_n::ErrorMsg_t message);
 

@@ -10,7 +10,7 @@ extern TinyFrame_CRC16 tf_1;
 extern TinyFrame_CRC16 tf_2;
 namespace TinyFrame_n{
 
-void WriteImpl_1(const uint8_t *buff, uint32_t len)
+void WriteImpl_1(const uint8_t *buff, size_t len)
 {
     printf("WriteImpl1:");
     // send to UART
@@ -33,7 +33,7 @@ void WriteImpl_1(const uint8_t *buff, uint32_t len)
     tf_2.Accept(buff2, len);
 }
 
-void WriteImpl_2(const uint8_t *buff, uint32_t len)
+void WriteImpl_2(const uint8_t *buff, size_t len)
 {
     tf_1.Accept(buff, len);
     printf("WriteImpl2:");
@@ -169,6 +169,8 @@ TinyFrame_CRC16 tf_2(callbacks_2, TinyFrame_n::Peer::SLAVE);
 
 
 int main(){
+
+    printf("size tf_1: %llu\n\n", sizeof(tf_1));
 
     uint8_t messageData[] = "Hello TinyFrame!";
 
