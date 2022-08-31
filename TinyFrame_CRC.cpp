@@ -2,9 +2,6 @@
 
 namespace TinyFrame_n{
 
-static size_t tablelessCrc_ByteIndex;
-
-
 /* CRC implementations */
 
 template<>
@@ -180,14 +177,13 @@ CKSUM<CKSUM_t::CRC32> CksumEnd<CKSUM_t::CRC32>(CKSUM<CKSUM_t::CRC32> cksum)
 template <>
 CKSUM<CKSUM_t::CRC8_TABLELESS> CksumStart<CKSUM_t::CRC8_TABLELESS>(void)
 {
-  tablelessCrc_ByteIndex = 0U;
   return (CKSUM<CKSUM_t::CRC8_TABLELESS>)0x00;
 }
 
 template <>
 CKSUM<CKSUM_t::CRC8_TABLELESS> CksumAdd<CKSUM_t::CRC8_TABLELESS>(CKSUM<CKSUM_t::CRC8_TABLELESS> cksum, uint8_t byte)
 {
-  return TablelessCrc_Function<uint8_t>(0x31U, cksum, byte, tablelessCrc_ByteIndex % sizeof(CKSUM<CKSUM_t::CRC8_TABLELESS>));
+  return TablelessCrc_Function<uint8_t>(0x5E, cksum, byte);
 }
 
 template <>
@@ -201,13 +197,12 @@ CKSUM<CKSUM_t::CRC8_TABLELESS> CksumEnd<CKSUM_t::CRC8_TABLELESS>(CKSUM<CKSUM_t::
 template <>
 CKSUM<CKSUM_t::CRC16_TABLELESS> CksumStart<CKSUM_t::CRC16_TABLELESS>(void)
 {
-  tablelessCrc_ByteIndex = 0U;
   return 0x0000;
 }
 template <>
 CKSUM<CKSUM_t::CRC16_TABLELESS> CksumAdd<CKSUM_t::CRC16_TABLELESS>(CKSUM<CKSUM_t::CRC16_TABLELESS> cksum, uint8_t byte)
 {
-  return TablelessCrc_Function<uint16_t>(0x8005U, cksum, byte, tablelessCrc_ByteIndex % sizeof(CKSUM<CKSUM_t::CRC16_TABLELESS>));
+  return TablelessCrc_Function<uint16_t>(0xC0C1, cksum, byte);
 }
 template <>
 CKSUM<CKSUM_t::CRC16_TABLELESS> CksumEnd<CKSUM_t::CRC16_TABLELESS>(CKSUM<CKSUM_t::CRC16_TABLELESS> cksum)
@@ -220,13 +215,12 @@ CKSUM<CKSUM_t::CRC16_TABLELESS> CksumEnd<CKSUM_t::CRC16_TABLELESS>(CKSUM<CKSUM_t
 template <>
 CKSUM<CKSUM_t::CRC32_TABLELESS> CksumStart<CKSUM_t::CRC32_TABLELESS>(void)
 {
-  tablelessCrc_ByteIndex = 0U;
   return (CKSUM<CKSUM_t::CRC32_TABLELESS>)0xFFFFFFFF;
 }
 template <>
 CKSUM<CKSUM_t::CRC32_TABLELESS> CksumAdd<CKSUM_t::CRC32_TABLELESS>(CKSUM<CKSUM_t::CRC32_TABLELESS> cksum, uint8_t byte)
 {
-  return TablelessCrc_Function<uint32_t>(0xEDB88320U, cksum, byte, tablelessCrc_ByteIndex % sizeof(CKSUM<CKSUM_t::CRC32_TABLELESS>));
+  return TablelessCrc_Function<uint32_t>(0x77073096, cksum, byte);
 }
 template <>
 CKSUM<CKSUM_t::CRC32_TABLELESS> CksumEnd<CKSUM_t::CRC32_TABLELESS>(CKSUM<CKSUM_t::CRC32_TABLELESS> cksum)

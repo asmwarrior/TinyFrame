@@ -41,22 +41,31 @@ CKSUM<CKSUM_TYPE> CksumEnd(CKSUM<CKSUM_TYPE> cksum);
 
 /* Tableless CRC */
 
-template<typename DATA_TYPE>
-DATA_TYPE TablelessCrc_Function(DATA_TYPE poly, DATA_TYPE inital_value, uint8_t byte, uint8_t byte_index) {
+template <typename DATA_TYPE>
+DATA_TYPE TablelessCrc_Function(DATA_TYPE poly, DATA_TYPE inital_crc, uint8_t byte)
+{
 
-  /* setup local variables */
-  constexpr DATA_TYPE msbMask = static_cast<DATA_TYPE>(1 << ((sizeof(DATA_TYPE) * 8U) - 1));
-  DATA_TYPE crc = inital_value ^ (byte << (byte_index * 8U));
+    /* extract relevant byte references */
+    DATA_TYPE msbMask = static_cast<DATA_TYPE>(1U << ((sizeof(DATA_TYPE) * 8U) - 1));
 
-  /* actual CRC calulation using XOR */
-  for (uint8_t bitIndex = byte_index * 8U; bitIndex < ((byte_index + 1U) * 8U); bitIndex++) {
-    if (crc & msbMask) {
-      crc = static_cast<DATA_TYPE>((crc << 1U) ^ poly);
-    } else {
-      crc = static_cast<DATA_TYPE>(crc << 1U);
+    /* init crc byte */
+    inital_crc ^= (byte << ((sizeof(DATA_TYPE) - 1) * 8U));
+
+    /* calculate byte CRC using XOR */
+    for (uint8_t bitIndex = 0U; bitIndex < 8U; bitIndex++)
+    {
+        if (inital_crc & msbMask)
+        {
+            inital_crc = (inital_crc << 1U) ^ poly;
+        }
+        else
+        {
+            inital_crc <<= 1U;
+        }
     }
-  }
-  return crc;
+
+    /* return modified crc */
+    return inital_crc; 
 }
 
 //endregion
