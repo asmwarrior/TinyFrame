@@ -177,7 +177,7 @@ CKSUM<CKSUM_t::CRC32> CksumEnd<CKSUM_t::CRC32>(CKSUM<CKSUM_t::CRC32> cksum)
 template <>
 CKSUM<CKSUM_t::CRC8_TABLELESS> CksumStart<CKSUM_t::CRC8_TABLELESS>(void)
 {
-  return (CKSUM<CKSUM_t::CRC8_TABLELESS>)0x00;
+  return CksumStart<CKSUM_t::CRC8>();
 }
 
 template <>
@@ -189,7 +189,7 @@ CKSUM<CKSUM_t::CRC8_TABLELESS> CksumAdd<CKSUM_t::CRC8_TABLELESS>(CKSUM<CKSUM_t::
 template <>
 CKSUM<CKSUM_t::CRC8_TABLELESS> CksumEnd<CKSUM_t::CRC8_TABLELESS>(CKSUM<CKSUM_t::CRC8_TABLELESS> cksum)
 {
-  return cksum;
+  return CksumEnd<CKSUM_t::CRC8>(cksum);
 }
 
 /* CRC16_TABLELESS */
@@ -197,7 +197,7 @@ CKSUM<CKSUM_t::CRC8_TABLELESS> CksumEnd<CKSUM_t::CRC8_TABLELESS>(CKSUM<CKSUM_t::
 template <>
 CKSUM<CKSUM_t::CRC16_TABLELESS> CksumStart<CKSUM_t::CRC16_TABLELESS>(void)
 {
-  return 0x0000;
+  return CksumStart<CKSUM_t::CRC16>();
 }
 template <>
 CKSUM<CKSUM_t::CRC16_TABLELESS> CksumAdd<CKSUM_t::CRC16_TABLELESS>(CKSUM<CKSUM_t::CRC16_TABLELESS> cksum, uint8_t byte)
@@ -207,7 +207,7 @@ CKSUM<CKSUM_t::CRC16_TABLELESS> CksumAdd<CKSUM_t::CRC16_TABLELESS>(CKSUM<CKSUM_t
 template <>
 CKSUM<CKSUM_t::CRC16_TABLELESS> CksumEnd<CKSUM_t::CRC16_TABLELESS>(CKSUM<CKSUM_t::CRC16_TABLELESS> cksum)
 {
-  return cksum;
+  return CksumEnd<CKSUM_t::CRC16>(cksum);
 }
 
 /* CRC32_TABLELESS */
@@ -215,7 +215,7 @@ CKSUM<CKSUM_t::CRC16_TABLELESS> CksumEnd<CKSUM_t::CRC16_TABLELESS>(CKSUM<CKSUM_t
 template <>
 CKSUM<CKSUM_t::CRC32_TABLELESS> CksumStart<CKSUM_t::CRC32_TABLELESS>(void)
 {
-  return (CKSUM<CKSUM_t::CRC32_TABLELESS>)0xFFFFFFFF;
+  return CksumStart<CKSUM_t::CRC32>();
 }
 template <>
 CKSUM<CKSUM_t::CRC32_TABLELESS> CksumAdd<CKSUM_t::CRC32_TABLELESS>(CKSUM<CKSUM_t::CRC32_TABLELESS> cksum, uint8_t byte)
@@ -225,7 +225,7 @@ CKSUM<CKSUM_t::CRC32_TABLELESS> CksumAdd<CKSUM_t::CRC32_TABLELESS>(CKSUM<CKSUM_t
 template <>
 CKSUM<CKSUM_t::CRC32_TABLELESS> CksumEnd<CKSUM_t::CRC32_TABLELESS>(CKSUM<CKSUM_t::CRC32_TABLELESS> cksum)
 {
-  return (CKSUM<CKSUM_t::CRC32_TABLELESS>)~cksum;
+  return CksumEnd<CKSUM_t::CRC32>(cksum);
 }
 
 } // TinyFrame_n
