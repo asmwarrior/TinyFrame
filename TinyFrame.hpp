@@ -1096,7 +1096,7 @@ size_t _FN TinyFrame<TEMPLATE_PARMS>::ComposeTail(uint8_t *outbuff, CKSUM<CKSUM_
 template<TEMPLATE_ARGS>
 bool _FN TinyFrame<TEMPLATE_PARMS>::SendFrame_Begin(Msg *msg, Listener listener, Listener_Timeout ftimeout, TICKS timeout)
 {
-    if(this->tfCallbacks_Optional.ClaimTx != nullptr){
+    if (this->internal.tfCallbacks_Optional_registered) {
         TRY(this->tfCallbacks_Optional.ClaimTx());
     }else{
         TRY(this->ClaimTx_Internal());
@@ -1107,13 +1107,13 @@ bool _FN TinyFrame<TEMPLATE_PARMS>::SendFrame_Begin(Msg *msg, Listener listener,
 
     if (listener) {
         if(!this->AddIdListener(msg, listener, ftimeout, timeout)) {
-            if(this->tfCallbacks_Optional.ReleaseTx != nullptr){
+            if (this->internal.tfCallbacks_Optional_registered) {
                 TRY(this->tfCallbacks_Optional.ClaimTx());
             }else{
                 TRY(this->ClaimTx_Internal());
             }
-            return false;
-        }
+                return false;
+            }
     }
 
     CKSUM_RESET(this->internal.tx_cksum);
@@ -1170,7 +1170,11 @@ void _FN TinyFrame<TEMPLATE_PARMS>::SendFrame_End()
     }
 
     this->tfCallbacks_Required.WriteImpl((const uint8_t *) this->internal.sendbuf, this->internal.tx_pos);
-    this->tfCallbacks_Optional.ReleaseTx();
+  if (this->internal.tfCallbacks_Optional_registered) {
+        this->tfCallbacks_Optional.ReleaseTx();
+    } else {
+      this->ReleaseTx_Internal();
+    }
 }
 
 /**
