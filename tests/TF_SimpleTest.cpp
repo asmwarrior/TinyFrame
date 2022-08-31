@@ -2,6 +2,7 @@
 #include "../TinyFrame_CRC.hpp"
 
 #include <iostream>
+#include <cstring>
 #include <cassert>
 
 using TinyFrame_CRC16 = TinyFrame_n::TinyFrame<TinyFrame_n::CKSUM_t::CRC16>;
@@ -170,7 +171,7 @@ TinyFrame_CRC16 tf_2(callbacks_2, TinyFrame_n::Peer::SLAVE);
 
 int main(){
 
-    printf("size tf_1: %llu\n\n", sizeof(tf_1));
+    printf("size tf_1: 0x%X\n\n", (int)sizeof(tf_1));
 
     uint8_t messageData[] = "Hello TinyFrame!";
 
