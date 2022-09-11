@@ -183,13 +183,13 @@ CKSUM<CKSUM_t::CRC8_TABLELESS> CksumStart<CKSUM_t::CRC8_TABLELESS>(void)
 template <>
 CKSUM<CKSUM_t::CRC8_TABLELESS> CksumAdd<CKSUM_t::CRC8_TABLELESS>(CKSUM<CKSUM_t::CRC8_TABLELESS> cksum, uint8_t byte)
 {
-  return TablelessCrc_Function<uint8_t>(0x5E, cksum, byte);
+  return TablelessCrc_Function<uint8_t>(0x31, cksum, bitReverse(byte));
 }
 
 template <>
 CKSUM<CKSUM_t::CRC8_TABLELESS> CksumEnd<CKSUM_t::CRC8_TABLELESS>(CKSUM<CKSUM_t::CRC8_TABLELESS> cksum)
 {
-  return CksumEnd<CKSUM_t::CRC8>(cksum);
+  return bitReverse(CksumEnd<CKSUM_t::CRC8>(cksum));
 }
 
 /* CRC16_TABLELESS */
@@ -202,12 +202,14 @@ CKSUM<CKSUM_t::CRC16_TABLELESS> CksumStart<CKSUM_t::CRC16_TABLELESS>(void)
 template <>
 CKSUM<CKSUM_t::CRC16_TABLELESS> CksumAdd<CKSUM_t::CRC16_TABLELESS>(CKSUM<CKSUM_t::CRC16_TABLELESS> cksum, uint8_t byte)
 {
-  return TablelessCrc_Function<uint16_t>(0xC0C1, cksum, byte);
+  return TablelessCrc_Function<uint16_t>(0x8005, cksum, bitReverse(byte));
 }
 template <>
 CKSUM<CKSUM_t::CRC16_TABLELESS> CksumEnd<CKSUM_t::CRC16_TABLELESS>(CKSUM<CKSUM_t::CRC16_TABLELESS> cksum)
 {
-  return CksumEnd<CKSUM_t::CRC16>(cksum);
+  uint16_t crc = CksumEnd<CKSUM_t::CRC16>(cksum);
+  byteReverse(reinterpret_cast<uint8_t*>(&crc), sizeof(uint16_t), true);
+  return crc;
 }
 
 /* CRC32_TABLELESS */
@@ -220,7 +222,7 @@ CKSUM<CKSUM_t::CRC32_TABLELESS> CksumStart<CKSUM_t::CRC32_TABLELESS>(void)
 template <>
 CKSUM<CKSUM_t::CRC32_TABLELESS> CksumAdd<CKSUM_t::CRC32_TABLELESS>(CKSUM<CKSUM_t::CRC32_TABLELESS> cksum, uint8_t byte)
 {
-  return TablelessCrc_Function<uint32_t>(0x77073096, cksum, byte);
+  return TablelessCrc_Function<uint32_t>(0xEDB88320, cksum, byte);
 }
 template <>
 CKSUM<CKSUM_t::CRC32_TABLELESS> CksumEnd<CKSUM_t::CRC32_TABLELESS>(CKSUM<CKSUM_t::CRC32_TABLELESS> cksum)

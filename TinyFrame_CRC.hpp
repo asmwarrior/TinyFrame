@@ -39,8 +39,48 @@ CKSUM<CKSUM_TYPE> CksumEnd(CKSUM<CKSUM_TYPE> cksum);
 #define CKSUM_ADD(cksum, byte) do { (cksum) = CksumAdd<CKSUM_TYPE>((cksum), (byte)); } while (0)
 #define CKSUM_FINALIZE(cksum)  do { (cksum) = CksumEnd<CKSUM_TYPE>((cksum)); } while (0)
 
-/* Tableless CRC */
+static uint8_t bit_reverse_lut[16U] = {
+    /* OUT,    IN */
+    0b0000, // 0b0000
+    0b1000, // 0b0001
+    0b0100, // 0b0010
+    0b1100, // 0b0011
+    0b0010, // 0b0100
+    0b1010, // 0b0101
+    0b0110, // 0b0110
+    0b1110, // 0b0111
+    0b0001, // 0b1000
+    0b1001, // 0b1001
+    0b0101, // 0b1010
+    0b1101, // 0b1011
+    0b0011, // 0b1100
+    0b1011, // 0b1101
+    0b0111, // 0b1110
+    0b1111, // 0b1111
+    };
 
+inline static uint8_t bitReverse(uint8_t byte) {
+   return (bit_reverse_lut[byte & 0b1111] << 4) | (bit_reverse_lut[byte >> 4]);
+}
+
+inline static void byteReverse(uint8_t* p_start, size_t size, bool bitreverse = false){
+    uint8_t* p_end = p_start + size - 1;
+    uint8_t temp;
+    while(p_start <= p_end){
+        temp = *p_start;
+        if(bitreverse){
+            *p_start = bitReverse(*p_end);
+            *p_end = bitReverse(temp);
+        }else{
+            *p_start = *p_end;
+            *p_end = temp;
+        }
+        p_start++;
+        p_end--;
+    }
+}
+
+/* Tableless CRC */
 template <typename DATA_TYPE>
 DATA_TYPE TablelessCrc_Function(DATA_TYPE poly, DATA_TYPE inital_crc, uint8_t byte)
 {
@@ -49,18 +89,18 @@ DATA_TYPE TablelessCrc_Function(DATA_TYPE poly, DATA_TYPE inital_crc, uint8_t by
     DATA_TYPE msbMask = static_cast<DATA_TYPE>(1U << ((sizeof(DATA_TYPE) * 8U) - 1));
 
     /* init crc byte */
-    inital_crc ^= (byte << ((sizeof(DATA_TYPE) - 1) * 8U));
+    inital_crc = inital_crc ^ (byte << ((sizeof(DATA_TYPE) - 1) * 8U));
 
     /* calculate byte CRC using XOR */
     for (uint8_t bitIndex = 0U; bitIndex < 8U; bitIndex++)
     {
-        if (inital_crc & msbMask)
+        if ((inital_crc & msbMask) != 0U)
         {
             inital_crc = (inital_crc << 1U) ^ poly;
         }
         else
         {
-            inital_crc <<= 1U;
+            inital_crc = (inital_crc << 1U);
         }
     }
 
