@@ -177,7 +177,7 @@ CKSUM<CKSUM_t::CRC32> CksumEnd<CKSUM_t::CRC32>(CKSUM<CKSUM_t::CRC32> cksum)
 template <>
 CKSUM<CKSUM_t::CRC8_TABLELESS> CksumStart<CKSUM_t::CRC8_TABLELESS>(void)
 {
-  return CksumStart<CKSUM_t::CRC8>();
+  return 0U;
 }
 
 template <>
@@ -189,7 +189,7 @@ CKSUM<CKSUM_t::CRC8_TABLELESS> CksumAdd<CKSUM_t::CRC8_TABLELESS>(CKSUM<CKSUM_t::
 template <>
 CKSUM<CKSUM_t::CRC8_TABLELESS> CksumEnd<CKSUM_t::CRC8_TABLELESS>(CKSUM<CKSUM_t::CRC8_TABLELESS> cksum)
 {
-  return bitReverse(CksumEnd<CKSUM_t::CRC8>(cksum));
+  return bitReverse(cksum);
 }
 
 /* CRC16_TABLELESS */

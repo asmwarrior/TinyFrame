@@ -174,34 +174,52 @@ int main(){
 
     printf("size tf_1: 0x%X\n\n", (int)sizeof(tf_1));
 
-    uint8_t crc_data_8[1] = {0x08};
-    uint8_t crc1 = 0;
-    uint8_t crc2 = 0;
-    for(size_t i = 0; i < sizeof(crc_data_8); i++){
-        crc1 = TinyFrame_n::CksumAdd<TinyFrame_n::CKSUM_t::CRC8>(crc1, crc_data_8[i]);
-        crc2 = TinyFrame_n::CksumAdd<TinyFrame_n::CKSUM_t::CRC8_TABLELESS>(crc2, crc_data_8[i]);
+    {
+        uint8_t crc_data_8[3] = {0x08, 0x09, 0x0A};
+        uint8_t crc1 = 0;
+        uint8_t crc2 = 0;
+        crc1 = TinyFrame_n::CksumStart<TinyFrame_n::CKSUM_t::CRC8>();
+        crc2 = TinyFrame_n::CksumStart<TinyFrame_n::CKSUM_t::CRC8_TABLELESS>();
+        for(size_t i = 0; i < sizeof(crc_data_8); i++){
+            crc1 = TinyFrame_n::CksumAdd<TinyFrame_n::CKSUM_t::CRC8>(crc1, crc_data_8[i]);
+            crc2 = TinyFrame_n::CksumAdd<TinyFrame_n::CKSUM_t::CRC8_TABLELESS>(crc2, crc_data_8[i]);
+        }
+        crc1 = TinyFrame_n::CksumEnd<TinyFrame_n::CKSUM_t::CRC8>(crc1);
+        crc2 = TinyFrame_n::CksumEnd<TinyFrame_n::CKSUM_t::CRC8_TABLELESS>(crc2);
+        printf("CRC8: 0x%X == 0x%X\n", crc1, crc2);
     }
-    printf("CRC8: 0x%X == 0x%X\n", crc1, crc2);
  
-    uint16_t crc_data_16 = 0x0101;
-    uint16_t crc3 = 0x0000;
-    uint16_t crc4 = 0x0000;
-    for(size_t i = 0; i < sizeof(crc_data_16); i++){
-        uint8_t byte = reinterpret_cast<uint8_t*>(&crc_data_16)[i];
-        crc3 = TinyFrame_n::CksumAdd<TinyFrame_n::CKSUM_t::CRC16>(crc3, byte);
-        crc4 = TinyFrame_n::CksumAdd<TinyFrame_n::CKSUM_t::CRC16_TABLELESS>(crc4, byte);
+    {
+        uint16_t crc_data_16[3] = {0x4242, 0x4343, 0x4444};
+        uint16_t crc3 = 0x0000;
+        uint16_t crc4 = 0x0000;
+        crc3 = TinyFrame_n::CksumStart<TinyFrame_n::CKSUM_t::CRC16>();
+        crc4 = TinyFrame_n::CksumStart<TinyFrame_n::CKSUM_t::CRC16_TABLELESS>();
+        for(size_t i = 0; i < sizeof(crc_data_16); i++){
+            uint8_t byte = reinterpret_cast<uint8_t*>(&crc_data_16)[i];
+            crc3 = TinyFrame_n::CksumAdd<TinyFrame_n::CKSUM_t::CRC16>(crc3, byte);
+            crc4 = TinyFrame_n::CksumAdd<TinyFrame_n::CKSUM_t::CRC16_TABLELESS>(crc4, byte);
+        }
+        crc3 = TinyFrame_n::CksumEnd<TinyFrame_n::CKSUM_t::CRC16>(crc3);
+        crc4 = TinyFrame_n::CksumEnd<TinyFrame_n::CKSUM_t::CRC16_TABLELESS>(crc4);
+        printf("CRC16: 0x%X == 0x%X\n", crc3, crc4);
     }
-    printf("CRC16: 0x%X == 0x%X\n", crc3, crc4);
 
-    uint32_t crc_data_32 = 0x00010001;
-    uint32_t crc5 = 0x00000000;
-    uint32_t crc6 = 0x00000000;
-    for(size_t i = 0; i < sizeof(crc_data_32); i++){
-        uint8_t byte = reinterpret_cast<uint8_t*>(&crc_data_32)[i];
-        crc5 = TinyFrame_n::CksumAdd<TinyFrame_n::CKSUM_t::CRC32>(crc5, byte);
-        crc6 = TinyFrame_n::CksumAdd<TinyFrame_n::CKSUM_t::CRC32_TABLELESS>(crc6, byte);
+    {
+        uint32_t crc_data_32 = 0x00000001;
+        uint32_t crc5 = 0x00000000;
+        uint32_t crc6 = 0x00000000;
+        crc5 = TinyFrame_n::CksumStart<TinyFrame_n::CKSUM_t::CRC32>();
+        crc6 = TinyFrame_n::CksumStart<TinyFrame_n::CKSUM_t::CRC32_TABLELESS>();
+        for(size_t i = 0; i < sizeof(crc_data_32); i++){
+            uint8_t byte = reinterpret_cast<uint8_t*>(&crc_data_32)[i];
+            crc5 = TinyFrame_n::CksumAdd<TinyFrame_n::CKSUM_t::CRC32>(crc5, byte);
+            crc6 = TinyFrame_n::CksumAdd<TinyFrame_n::CKSUM_t::CRC32_TABLELESS>(crc6, byte);
+        }
+        crc5 = TinyFrame_n::CksumEnd<TinyFrame_n::CKSUM_t::CRC32>(crc5);
+        crc6 = TinyFrame_n::CksumEnd<TinyFrame_n::CKSUM_t::CRC32_TABLELESS>(crc6);
+        printf("CRC32: 0x%X == 0x%X\n", crc5, crc6);
     }
-    printf("CRC32: 0x%X == 0x%X\n", crc5, crc6);
 
     uint8_t messageData[] = "Hello TinyFrame!";
 
