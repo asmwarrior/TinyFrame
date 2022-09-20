@@ -183,13 +183,13 @@ CKSUM<CKSUM_t::CRC8_TABLELESS> CksumStart<CKSUM_t::CRC8_TABLELESS>(void)
 template <>
 CKSUM<CKSUM_t::CRC8_TABLELESS> CksumAdd<CKSUM_t::CRC8_TABLELESS>(CKSUM<CKSUM_t::CRC8_TABLELESS> cksum, uint8_t byte)
 {
-  return TablelessCrc_Function<uint8_t>(0x31, cksum, bitReverse(byte));
+  return TablelessCrc_Function<uint8_t>(0x31, cksum, reflect_bits(byte));
 }
 
 template <>
 CKSUM<CKSUM_t::CRC8_TABLELESS> CksumEnd<CKSUM_t::CRC8_TABLELESS>(CKSUM<CKSUM_t::CRC8_TABLELESS> cksum)
 {
-  return bitReverse(cksum);
+  return reflect_bits(cksum);
 }
 
 /* CRC16_TABLELESS */
@@ -202,13 +202,13 @@ CKSUM<CKSUM_t::CRC16_TABLELESS> CksumStart<CKSUM_t::CRC16_TABLELESS>(void)
 template <>
 CKSUM<CKSUM_t::CRC16_TABLELESS> CksumAdd<CKSUM_t::CRC16_TABLELESS>(CKSUM<CKSUM_t::CRC16_TABLELESS> cksum, uint8_t byte)
 {
-  return TablelessCrc_Function<uint16_t>(0x8005, cksum, bitReverse(byte));
+  return TablelessCrc_Function<uint16_t>(0x8005, cksum, reflect_bits(byte));
 }
 template <>
 CKSUM<CKSUM_t::CRC16_TABLELESS> CksumEnd<CKSUM_t::CRC16_TABLELESS>(CKSUM<CKSUM_t::CRC16_TABLELESS> cksum)
 {
   uint16_t crc = CksumEnd<CKSUM_t::CRC16>(cksum);
-  byteReverse(reinterpret_cast<uint8_t*>(&crc), sizeof(uint16_t), true);
+  reflect_bytes(reinterpret_cast<uint8_t*>(&crc), sizeof(uint16_t), true);
   return crc;
 }
 
@@ -222,13 +222,13 @@ CKSUM<CKSUM_t::CRC32_TABLELESS> CksumStart<CKSUM_t::CRC32_TABLELESS>(void)
 template <>
 CKSUM<CKSUM_t::CRC32_TABLELESS> CksumAdd<CKSUM_t::CRC32_TABLELESS>(CKSUM<CKSUM_t::CRC32_TABLELESS> cksum, uint8_t byte)
 {
-  return TablelessCrc_Function<uint32_t>(0x04C11DB7, cksum, bitReverse(byte)); // 0xEDB88320 reversed 0x04C11DB7
+  return TablelessCrc_Function<uint32_t>(0x04C11DB7, cksum, reflect_bits(byte)); // 0xEDB88320 reversed 0x04C11DB7
 }
 template <>
 CKSUM<CKSUM_t::CRC32_TABLELESS> CksumEnd<CKSUM_t::CRC32_TABLELESS>(CKSUM<CKSUM_t::CRC32_TABLELESS> cksum)
 {
   uint32_t crc = CksumEnd<CKSUM_t::CRC32>(cksum);
-  byteReverse(reinterpret_cast<uint8_t*>(&crc), sizeof(uint32_t), true);
+  reflect_bytes(reinterpret_cast<uint8_t*>(&crc), sizeof(uint32_t), true);
   return crc;
 }
 

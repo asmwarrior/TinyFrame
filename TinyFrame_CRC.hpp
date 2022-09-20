@@ -39,7 +39,7 @@ CKSUM<CKSUM_TYPE> CksumEnd(CKSUM<CKSUM_TYPE> cksum);
 #define CKSUM_ADD(cksum, byte) do { (cksum) = CksumAdd<CKSUM_TYPE>((cksum), (byte)); } while (0)
 #define CKSUM_FINALIZE(cksum)  do { (cksum) = CksumEnd<CKSUM_TYPE>((cksum)); } while (0)
 
-static uint8_t bit_reverse_lut[16U] = {
+static constexpr uint8_t bit_reflect_lut[16U] = {
     /* OUT,    IN */
     0b0000, // 0b0000
     0b1000, // 0b0001
@@ -59,18 +59,18 @@ static uint8_t bit_reverse_lut[16U] = {
     0b1111, // 0b1111
     };
 
-inline static uint8_t bitReverse(uint8_t byte) {
-   return (bit_reverse_lut[byte & 0b1111] << 4) | (bit_reverse_lut[byte >> 4]);
+static constexpr uint8_t reflect_bits(uint8_t byte) {
+   return (bit_reflect_lut[byte & 0b1111] << 4) | (bit_reflect_lut[byte >> 4]);
 }
 
-inline static void byteReverse(uint8_t* p_start, size_t size, bool bitreverse = false){
+static inline void reflect_bytes(uint8_t* p_start, size_t size, bool bit_reflect = false){
     uint8_t* p_end = p_start + size - 1;
-    uint8_t temp;
+    uint8_t temp = 0;
     while(p_start <= p_end){
         temp = *p_start;
-        if(bitreverse){
-            *p_start = bitReverse(*p_end);
-            *p_end = bitReverse(temp);
+        if(bit_reflect){
+            *p_start = reflect_bits(*p_end);
+            *p_end = reflect_bits(temp);
         }else{
             *p_start = *p_end;
             *p_end = temp;
@@ -82,7 +82,7 @@ inline static void byteReverse(uint8_t* p_start, size_t size, bool bitreverse = 
 
 /* Tableless CRC */
 template <typename DATA_TYPE>
-DATA_TYPE TablelessCrc_Function(DATA_TYPE poly, DATA_TYPE inital_crc, uint8_t byte)
+constexpr static DATA_TYPE TablelessCrc_Function(DATA_TYPE poly, DATA_TYPE inital_crc, uint8_t byte)
 {
 
     /* extract relevant byte references */
