@@ -159,15 +159,15 @@ static const uint32_t crc32_table[] = { /* CRC polynomial 0xedb88320 */
 
 template<>
 CKSUM<CKSUM_t::CRC32> CksumStart<CKSUM_t::CRC32>(void)
-  { return (CKSUM<CKSUM_t::CRC32>)0xFFFFFFFF; }
+  { return 0xFFFFFFFFU; }
 
 template<>
 CKSUM<CKSUM_t::CRC32> CksumAdd<CKSUM_t::CRC32>(CKSUM<CKSUM_t::CRC32> cksum, uint8_t byte)
-  { return crc32_table[((cksum) ^ ((uint8_t)byte)) & 0xff] ^ ((cksum) >> 8); }
+  { return (cksum >> 8) ^ crc32_table[(cksum ^ byte) & 0xFF]; }
 
 template<>
 CKSUM<CKSUM_t::CRC32> CksumEnd<CKSUM_t::CRC32>(CKSUM<CKSUM_t::CRC32> cksum)
-  { return (CKSUM<CKSUM_t::CRC32>) ~cksum; }
+  { return cksum ^ 0xFFFFFFFFU; }
 
 
 
@@ -222,12 +222,14 @@ CKSUM<CKSUM_t::CRC32_TABLELESS> CksumStart<CKSUM_t::CRC32_TABLELESS>(void)
 template <>
 CKSUM<CKSUM_t::CRC32_TABLELESS> CksumAdd<CKSUM_t::CRC32_TABLELESS>(CKSUM<CKSUM_t::CRC32_TABLELESS> cksum, uint8_t byte)
 {
-  return TablelessCrc_Function<uint32_t>(0xEDB88320, cksum, byte);
+  return TablelessCrc_Function<uint32_t>(0x04C11DB7, cksum, bitReverse(byte)); // 0xEDB88320 reversed 0x04C11DB7
 }
 template <>
 CKSUM<CKSUM_t::CRC32_TABLELESS> CksumEnd<CKSUM_t::CRC32_TABLELESS>(CKSUM<CKSUM_t::CRC32_TABLELESS> cksum)
 {
-  return CksumEnd<CKSUM_t::CRC32>(cksum);
+  uint32_t crc = CksumEnd<CKSUM_t::CRC32>(cksum);
+  byteReverse(reinterpret_cast<uint8_t*>(&crc), sizeof(uint32_t), true);
+  return crc;
 }
 
 } // TinyFrame_n
