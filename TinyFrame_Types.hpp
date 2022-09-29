@@ -8,14 +8,17 @@ namespace TinyFrame_n{
 
 // Checksum type (0 = none, 8 = ~XOR, 16 = CRC16 0x8005, 32 = CRC32)
 enum class CKSUM_t{
-    NONE     = 0,  // no checksums
-    CUSTOM8  = 1,  // Custom 8-bit checksum
-    CUSTOM16 = 2,  // Custom 16-bit checksum
-    CUSTOM32 = 3,  // Custom 32-bit checksum
-    XOR      = 8,  // inverted xor of all payload bytes
-    CRC8     = 9,  // Dallas/Maxim CRC8 (1-wire)
-    CRC16    = 16, // CRC16 with the polynomial 0x8005 (x^16 + x^15 + x^2 + 1)
-    CRC32    = 32, // CRC32 with the polynomial 0xedb88320
+    NONE               = 0,  // no checksums
+    CUSTOM8            = 1,  // Custom 8-bit checksum
+    CUSTOM16           = 2,  // Custom 16-bit checksum
+    CUSTOM32           = 3,  // Custom 32-bit checksum
+    XOR                = 8,  // inverted xor of all payload bytes
+    CRC8               = 9,  // Dallas/Maxim CRC8 (1-wire)
+    CRC16              = 10, // CRC16 with the polynomial 0x8005 (x^16 + x^15 + x^2 + 1)
+    CRC32              = 11, // CRC32 with the polynomial 0xedb88320
+    CRC8_TABLELESS     = 12, // Tableless, Dallas/Maxim CRC8 (1-wire)
+    CRC16_TABLELESS    = 13, // Tableless, CRC16 with the polynomial 0x8005 (x^16 + x^15 + x^2 + 1)
+    CRC32_TABLELESS    = 14, // Tableless, CRC32 with the polynomial 0xedb88320
 };
 
 enum class ErrorMsg_t : uint8_t{
@@ -57,14 +60,18 @@ struct CKSUM_TYPE_MAP;
 
 template <> struct CKSUM_TYPE_MAP<CKSUM_t::NONE> {using type = uint8_t;};
 template <> struct CKSUM_TYPE_MAP<CKSUM_t::XOR> {using type = uint8_t;};
-template <> struct CKSUM_TYPE_MAP<CKSUM_t::CUSTOM8> {using type = uint8_t;};
+
 template <> struct CKSUM_TYPE_MAP<CKSUM_t::CRC8> {using type = uint8_t;};
+template <> struct CKSUM_TYPE_MAP<CKSUM_t::CUSTOM8> {using type = uint8_t;};
+template <> struct CKSUM_TYPE_MAP<CKSUM_t::CRC8_TABLELESS> {using type = uint8_t;};
 
 template <> struct CKSUM_TYPE_MAP<CKSUM_t::CRC16> {using type = uint16_t;};
 template <> struct CKSUM_TYPE_MAP<CKSUM_t::CUSTOM16> {using type = uint16_t;};
+template <> struct CKSUM_TYPE_MAP<CKSUM_t::CRC16_TABLELESS> {using type = uint16_t;};
 
 template <> struct CKSUM_TYPE_MAP<CKSUM_t::CRC32> {using type = uint32_t;};
 template <> struct CKSUM_TYPE_MAP<CKSUM_t::CUSTOM32> {using type = uint32_t;};
+template <> struct CKSUM_TYPE_MAP<CKSUM_t::CRC32_TABLELESS> {using type = uint32_t;};
 
 
 template<CKSUM_t CKSUM_TYPE>

@@ -6,9 +6,10 @@
 #include <cassert>
 
 using TinyFrame_CRC16 = TinyFrame_n::TinyFrame<TinyFrame_n::CKSUM_t::CRC16>;
+using TinyFrame_CRC16T = TinyFrame_n::TinyFrame<TinyFrame_n::CKSUM_t::CRC16_TABLELESS>;
 
 extern TinyFrame_CRC16 tf_1;
-extern TinyFrame_CRC16 tf_2;
+extern TinyFrame_CRC16T tf_2;
 namespace TinyFrame_n{
 
 void WriteImpl_1(const uint8_t *buff, size_t len)
@@ -141,7 +142,7 @@ const TinyFrame_CRC16::RequiredCallbacks callbacks_1 = {
     TinyFrame_n::Error_1, // WriteImpl
 };
 
-const TinyFrame_CRC16::RequiredCallbacks callbacks_2 = {
+const TinyFrame_CRC16T::RequiredCallbacks callbacks_2 = {
     TinyFrame_n::WriteImpl_2,
     TinyFrame_n::Error_2,
 };
@@ -163,7 +164,7 @@ TinyFrame_n::TinyFrameConfig_t config = {
 };
 
 TinyFrame_CRC16 tf_1(callbacks_1, TinyFrame_n::Peer::MASTER);
-TinyFrame_CRC16 tf_2(callbacks_2, TinyFrame_n::Peer::SLAVE);
+TinyFrame_CRC16T tf_2(callbacks_2, TinyFrame_n::Peer::SLAVE);
 
 // TinyFrame_CRC16 tf16(callbacks16);
 // TinyFrame_CRC32 tf32_2(callbacks32, config);
@@ -172,6 +173,56 @@ TinyFrame_CRC16 tf_2(callbacks_2, TinyFrame_n::Peer::SLAVE);
 int main(){
 
     printf("size tf_1: 0x%X\n\n", (int)sizeof(tf_1));
+
+    {
+        uint8_t crc_data_8[] = {0x40, 0x41, 0x42};
+        uint8_t crc1 = 0x00;
+        uint8_t crc2 = 0x00;
+        crc1 = TinyFrame_n::CksumStart<TinyFrame_n::CKSUM_t::CRC8>();
+        crc2 = TinyFrame_n::CksumStart<TinyFrame_n::CKSUM_t::CRC8_TABLELESS>();
+        for(size_t i = 0; i < sizeof(crc_data_8); i++){
+            crc1 = TinyFrame_n::CksumAdd<TinyFrame_n::CKSUM_t::CRC8>(crc1, crc_data_8[i]);
+            crc2 = TinyFrame_n::CksumAdd<TinyFrame_n::CKSUM_t::CRC8_TABLELESS>(crc2, crc_data_8[i]);
+        }
+        crc1 = TinyFrame_n::CksumEnd<TinyFrame_n::CKSUM_t::CRC8>(crc1);
+        crc2 = TinyFrame_n::CksumEnd<TinyFrame_n::CKSUM_t::CRC8_TABLELESS>(crc2);
+        printf("CRC8: 0x%X == 0x%X\n", crc1, crc2);
+        assert(crc1 == crc2);
+    }
+ 
+    {
+        uint16_t crc_data_16[] = {0x4040, 0x4141, 0x4242};
+        uint16_t crc1 = 0x0000;
+        uint16_t crc2 = 0x0000;
+        crc1 = TinyFrame_n::CksumStart<TinyFrame_n::CKSUM_t::CRC16>();
+        crc2 = TinyFrame_n::CksumStart<TinyFrame_n::CKSUM_t::CRC16_TABLELESS>();
+        for(size_t i = 0; i < sizeof(crc_data_16); i++){
+            uint8_t byte = reinterpret_cast<uint8_t*>(&crc_data_16)[i];
+            crc1 = TinyFrame_n::CksumAdd<TinyFrame_n::CKSUM_t::CRC16>(crc1, byte);
+            crc2 = TinyFrame_n::CksumAdd<TinyFrame_n::CKSUM_t::CRC16_TABLELESS>(crc2, byte);
+        }
+        crc1 = TinyFrame_n::CksumEnd<TinyFrame_n::CKSUM_t::CRC16>(crc1);
+        crc2 = TinyFrame_n::CksumEnd<TinyFrame_n::CKSUM_t::CRC16_TABLELESS>(crc2);
+        printf("CRC16: 0x%X == 0x%X\n", crc1, crc2);
+        assert(crc1 == crc2);
+    }
+
+    {
+        uint32_t crc_data_32[] = {0x40404040, 0x41414141, 0x42424242};
+        uint32_t crc1 = 0x00000000;
+        uint32_t crc2 = 0x00000000;
+        crc1 = TinyFrame_n::CksumStart<TinyFrame_n::CKSUM_t::CRC32>();
+        crc2 = TinyFrame_n::CksumStart<TinyFrame_n::CKSUM_t::CRC32_TABLELESS>();
+        for(size_t i = 0; i < sizeof(crc_data_32); i++){
+            uint8_t byte = reinterpret_cast<uint8_t*>(&crc_data_32)[i];
+            crc1 = TinyFrame_n::CksumAdd<TinyFrame_n::CKSUM_t::CRC32>(crc1, byte);
+            crc2 = TinyFrame_n::CksumAdd<TinyFrame_n::CKSUM_t::CRC32_TABLELESS>(crc2, byte);
+        }
+        crc1 = TinyFrame_n::CksumEnd<TinyFrame_n::CKSUM_t::CRC32>(crc1);
+        crc2 = TinyFrame_n::CksumEnd<TinyFrame_n::CKSUM_t::CRC32_TABLELESS>(crc2);
+        printf("CRC32: 0x%X == 0x%X\n", crc1, crc2);
+        assert(crc1 == crc2);
+    }
 
     uint8_t messageData[] = "Hello TinyFrame!";
 
