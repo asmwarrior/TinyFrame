@@ -4,7 +4,7 @@ MIT License
 TinyFramePlusPlus Library.
 https://github.com/marcelnabeck/TinyFramePlusPlus
 
-Copyright(c) 2018 Ondřej Hruška
+Copyright(c) 2017-2018 Ondřej Hruška
 Copyright(c) 2022 Marcel Nabeck
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
