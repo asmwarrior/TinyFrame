@@ -1,5 +1,5 @@
-#ifndef TinyFrame_TypesHPP
-#define TinyFrame_TypesHPP
+#ifndef TINYFRAME_TYPES_HPP
+#define TINYFRAME_TYPES_HPP
 
 #include <cstdint>  // uint8_t etc
 #include <cstdlib> // size_t
@@ -171,4 +171,4 @@ struct Msg{
 
 } // TinyFrame_n
 
-#endif // TinyFrame_TypesHPP
+#endif // TINYFRAME_TYPES_HPP

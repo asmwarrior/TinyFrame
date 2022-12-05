@@ -1,5 +1,5 @@
-#ifndef TinyFrame_CRC_HPP
-#define TinyFrame_CRC_HPP
+#ifndef TINYFRAME_CRC_HPP
+#define TINYFRAME_CRC_HPP
 
 #include "TinyFrame_Types.hpp"
 
@@ -101,4 +101,4 @@ constexpr static DATA_TYPE TablelessCrc_Function(DATA_TYPE poly, DATA_TYPE inita
 
 } // TinyFrame_n
 
-#endif // TinyFrame_CRC_HPP
+#endif // TINYFRAME_CRC_HPP

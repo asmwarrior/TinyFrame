@@ -1,7 +1,3 @@
-#ifndef TinyFrameH
-#define TinyFrameH
-
-
 /**
  * TinyFrame protocol library
  *
@@ -11,6 +7,9 @@
  * Upstream URL: https://github.com/MightyPork/TinyFrame
  */
 
+
+#ifndef TINYFRAME_HPP
+#define TINYFRAME_HPP
 
 //---------------------------------------------------------------------------
 #include <new>
@@ -1347,4 +1346,4 @@ static TinyFrame<TEMPLATE_PARMS> tinyFrameCreate_Static(char buf[sizeof(TinyFram
 
 using TinyFrameDefault=TinyFrame_n::TinyFrame<>;
 
-#endif // TinyFrameH
+#endif // TINYFRAME_HPP
