@@ -1,23 +1,40 @@
-#ifndef TinyFrameH
-#define TinyFrameH
+/******************************************************************************
+MIT License
 
+TinyFramePlusPlus Library.
+https://github.com/marcelnabeck/TinyFramePlusPlus
 
-/**
- * TinyFrame protocol library
- *
- * (c) Ondřej Hruška 2017-2018, MIT License
- * no liability/warranty, free for any use, must retain this notice & license
- *
- * Upstream URL: https://github.com/MightyPork/TinyFrame
- */
+Copyright(c) 2017-2018 Ondřej Hruška
+Copyright(c) 2022 Marcel Nabeck
 
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+******************************************************************************/
+
+#ifndef TINYFRAME_HPP
+#define TINYFRAME_HPP
 
 //---------------------------------------------------------------------------
 #include <new>
 //---------------------------------------------------------------------------
 
 #include "TinyFrame_Types.hpp"
-#include "TinyFrame_CRC.hpp"
+#include "TinyFrame_CheckSum.hpp"
 
 namespace TinyFrame_n{
 
@@ -1347,4 +1364,4 @@ static TinyFrame<TEMPLATE_PARMS> tinyFrameCreate_Static(char buf[sizeof(TinyFram
 
 using TinyFrameDefault=TinyFrame_n::TinyFrame<>;
 
-#endif // TinyFrameH
+#endif // TINYFRAME_HPP

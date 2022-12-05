@@ -1,5 +1,5 @@
 #include "../TinyFrame.hpp"
-#include "../TinyFrame_CRC.hpp"
+#include "../TinyFrame_CheckSum.hpp"
 
 #include <iostream>
 #include <cstring>
