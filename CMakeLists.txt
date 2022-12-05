@@ -14,8 +14,8 @@ set(CMAKE_CXX_STANDARD 14)
 
 set(SOURCES_TINYFRAME
         TinyFrame.hpp
-        TinyFrame_CRC.cpp
-        TinyFrame_CRC.hpp
+        TinyFrame_CheckSum.cpp
+        TinyFrame_CheckSum.hpp
         TinyFrame_Types.hpp
         )
 
