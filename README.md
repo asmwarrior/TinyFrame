@@ -2,7 +2,7 @@
 
 A [TinyFrame](https://github.com/MightyPork/TinyFrame) port to C++
 
-This repo contains an onject oriented, template based implementation of TinyFrame, which is fully compatible with the other TinyFrame versions.
+This repo contains an object oriented and template based implementation of TinyFrame, which is fully compatible with the other TinyFrame versions.
 
 ## TinyFramePlusPlus compared to the TinyFrame (C)
 
