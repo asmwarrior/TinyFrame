@@ -31,12 +31,18 @@ SOFTWARE.
 
 //---------------------------------------------------------------------------
 #include <new>
+#include <functional>
 //---------------------------------------------------------------------------
 
 #include "TinyFrame_Types.hpp"
 #include "TinyFrame_CheckSum.hpp"
 
 namespace TinyFrame_n{
+
+using WriteImplCallback_t = std::function<void(const uint8_t *buff, size_t len)>;
+using ErrorCallback_t = std::function<void(ErrorMsg_t message)>;
+using ClaimTxCallback_t = std::function<bool()>;
+using ReleaseTxCallback_t = std::function<void()>;
 
 #define TF_VERSION "2.3.0"
 
@@ -114,19 +120,19 @@ class TinyFrame{
              *
              * ! Implement this in your application code !
              */
-            void (*WriteImpl)(const uint8_t *buff, size_t len);
+            WriteImplCallback_t WriteImpl;
 
-            void (*Error)(ErrorMsg_t message);
+            ErrorCallback_t Error;
 
         }; // variable definition
 
         struct OptionalCallbacks{
 
             /** Claim the TX interface before composing and sending a frame */
-            bool (*ClaimTx)();
+            ClaimTxCallback_t ClaimTx;
 
             /** Free the TX interface after composing and sending a frame */
-            void (*ReleaseTx)();
+            ReleaseTxCallback_t ReleaseTx;
 
         }; // variable definition
 
