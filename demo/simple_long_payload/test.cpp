@@ -3,6 +3,10 @@
 #include "../../TinyFrame.hpp"
 #include "../utils.hpp"
 
+#ifdef _WIN32 // Windows specific code
+#include <Windows.h>
+#endif // _WIN32
+
 using namespace TinyFrame_n;
 using TinyFrame_Demo=TinyFrameDefault;
 
@@ -17,7 +21,16 @@ extern const char *romeo;
 void WriteImpl(const uint8_t *buff, size_t len)
 {
     printf("--------------------\n");
+
+#ifdef _WIN32 // Windows specific code
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN); // Set text color to green
+    printf("WriteImpl - sending frame:\n");
+    SetConsoleTextAttribute(hConsole, FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset text color to default
+#else // Linux specific code
     printf("\033[32mWriteImpl - sending frame:\033[0m\n");
+#endif
+
     dumpFrame(buff, len);
 
     // Send it back as if we received it
